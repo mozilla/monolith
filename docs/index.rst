@@ -1,19 +1,15 @@
 ========================================
-Welcome to this project's documentation!
+Monolith
 ========================================
 
-This is a documentation template for a **web application based on Playdoh**.
-Feel free to change this to your liking.
+This is a server to provide metrics for the Mozilla Marketplace. It's kind of
+a black box that will output JSON via a REST api.
 
+It is currently under construction.
 
-About playdoh
--------------
+.. image:: http://farm3.staticflickr.com/2123/2366892425_d6df51cdeb_d.jpg
 
-This project is based on **playdoh**. Mozilla's Playdoh is an open source
-web application template based on `Django <http://www.djangoproject.com/>`_.
-
-To learn more about it, step by the `playdoh project page
-<https://github.com/mozilla/playdoh>`_.
+Photo courtesy: http://www.flickr.com/photos/senorwences/2366892425/
 
 Contents
 --------
