@@ -20,3 +20,7 @@ class Metric(models.Model):
             'value': self.value
         }
         conn.index(data, 'monolith', 'metrics/%s/' % self.pk)
+
+    def unindex(self):
+        conn = get_es()
+        conn.delete('monolith', 'metrics', self.pk)
