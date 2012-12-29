@@ -30,6 +30,7 @@ pip install -q --exists-action=w --no-deps -r requirements/test.txt
 
 cat > monolith/settings/local.py <<SETTINGS
 from monolith import *
+import logging
 
 DEBUG = True
 SECRET_KEY = 'not-blank-honest'
