@@ -28,8 +28,8 @@ git submodule update --init --recursive
 source $VENV/bin/activate
 pip install -q --exists-action=w --no-deps -r requirements/test.txt
 
-cat > solitude/settings/local.py <<SETTINGS
-from solitude.settings.base import *
+cat > monolith/settings/local.py <<SETTINGS
+from monolith import *
 
 DEBUG = True
 SECRET_KEY = 'not-blank-honest'
