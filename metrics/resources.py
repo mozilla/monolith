@@ -1,12 +1,13 @@
 import json
 
 from django.core.exceptions import ObjectDoesNotExist
+from django import http
 
 from elasticutils import get_es
 from tastypie import fields
-from tastypie.exceptions import NotFound
-from tastypie.resources import Resource, ModelResource
 from tastypie.authorization import Authorization
+from tastypie.exceptions import ImmediateHttpResponse, NotFound
+from tastypie.resources import Resource, ModelResource
 
 from models import Metric
 
@@ -32,7 +33,10 @@ class ESResource(Resource):
 
     def obj_get_list(self, request, **kwargs):
         es = get_es()
-        query = json.loads(request.body)
+        try:
+            query = json.loads(request.body)
+        except ValueError:
+            raise ImmediateHttpResponse(response=http.HttpResponseBadRequest())
         result = es.search(query, 'monolith')
         return [Hit(**data.get('_source', data.get('fields', {})))
                 for data in result['hits']['hits']]

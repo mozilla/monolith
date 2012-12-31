@@ -49,10 +49,11 @@ class Command(BaseCommand):
                 uuid = 'global_stats:%s' % row[0]
                 if not Metric.objects.filter(uuid=uuid).exists():
                     try:
-                        Metric.objects.create(uuid=uuid, date=row[3],
-                                              name=fix_name(row[1]),
-                                              value=row[2])
+                        obj = Metric.objects.create(uuid=uuid, date=row[3],
+                                                    name=fix_name(row[1]),
+                                                    value=row[2])
                         count['imported'] += 1
+                        obj.index()
                     except:
                         count['errors'] += 1
                         if options['raise']:

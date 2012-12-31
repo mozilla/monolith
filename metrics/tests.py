@@ -23,16 +23,20 @@ class MetricsApiClient(TestApiClient):
         content_type = self.get_content_type(format)
         kwargs['content_type'] = content_type
 
-        if data is not None:
-            data = self.serializer.serialize(data, format=content_type)
-
         req = {
-            'CONTENT_LENGTH': len(data),
+            'CONTENT_LENGTH': 0,
             'CONTENT_TYPE': 'application/json',
             'PATH_INFO': unquote(parsed[2]),
             'REQUEST_METHOD': 'GET',
-            'wsgi.input': FakePayload(data),
         }
+
+        if data is not None:
+            data = self.serializer.serialize(data, format=content_type)
+            req.update({
+                'CONTENT_LENGTH': len(data),
+                'wsgi.input': FakePayload(data)
+            })
+
         response = self.client.request(**req)
         return response
 
@@ -52,7 +56,6 @@ class TestMetrics(test.TestCase):
     def test_unindex(self, delete):
         Metric.objects.get(pk=1).unindex()
         assert delete.called
-
 
 
 class TestIndexResource(ResourceTestCase):
@@ -85,6 +88,10 @@ class TestESResource(ResourceTestCase):
         eq_(res.status_code, 200)
         eq_(len(json.loads(res.content)['objects']), 0)
 
+    def test_get_bad_json(self, search):
+        res = self.api_client.get(self.url, format='json', data=None)
+        eq_(res.status_code, 400)
+
     def test_get_filter(self, search):
         data = {'filter': {'term': {'name': 'addons.downloads.count.total'}}}
         search.return_value = {u'hits': {u'hits': [
@@ -113,5 +120,3 @@ class TestESResource(ResourceTestCase):
         result = data['objects'][0]
         eq_(result['date'], None)
         eq_(result['value'], 2681)
-
-
