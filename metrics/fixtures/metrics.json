@@ -20,5 +20,16 @@
       "key": "722",
       "uuid": "2"
     }
+  },
+  {
+    "pk": 3,
+    "model": "metrics.metric",
+    "fields": {
+      "date": "2009-07-17",
+      "value": 8,
+      "name": "addons.downloads.count",
+      "key": "",
+      "uuid": "3"
+    }
   }
 ]
