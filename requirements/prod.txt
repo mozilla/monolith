@@ -1,4 +1,5 @@
 Django==1.4.3
+dj-database-url==0.2.1
 django-multidb-router==0.5
 django-nose==1.1
 django-sha2==0.4
