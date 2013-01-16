@@ -1,1 +1,0 @@
-ALTER TABLE metric ADD COLUMN `uuid` varchar(255) NOT NULL UNIQUE;
