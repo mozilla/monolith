@@ -9,7 +9,8 @@ function drawDataRange(from, size) {
   var users_series = chart.series[1];
 
   var query = {"query": {"match_all": {}},
-    "from": from, 
+    "facets": {"facet_os": {"terms": {"field": "os"}}},
+    "from": from,
     "size": size,
     "sort": [{"date": {"order" : "asc"}}]
   };
@@ -27,9 +28,13 @@ function drawDataRange(from, size) {
     success: function(json) {
       var downloads = [];
       var users = [];
+      var facets = [];
       $.each(json.hits.hits, function(i, item) {
         downloads.push({x: Date.parse(item._source.date), y: item._source.downloads_count});
         users.push({x: Date.parse(item._source.date), y: item._source.users_count});
+      });
+      $.each(json.facets.facet_os.terms, function(i, item) {
+        facets.push({term: item.term, count: item.count});
       });
 
       downloads_series.setData(downloads);
