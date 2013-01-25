@@ -13,6 +13,14 @@ def feed(index='monolith', type='downloads'):
     last_day = datetime.datetime(2012, 12, 31)
     day_range = last_day - first_day
 
+    client.create_index('monolith', settings={
+        'number_of_shards': 1,
+        'number_of_replicas': 0,
+        'analysis': {'analyzer': {'default': {
+            'type': 'custom', 'tokenizer': 'keyword'
+        }}},
+        'store': {'compress': {'stored': 'true'}},
+    })
     for delta in range(day_range.days):
         data = {'date': first_day + datetime.timedelta(days=delta),
                 'os': random.choice(platforms),
@@ -24,6 +32,7 @@ def feed(index='monolith', type='downloads'):
         sys.stdout.write('.')
         sys.stdout.flush()
 
+    client.optimize('monolith', max_num_segments=1, wait_for_merge=True)
     sys.stdout.write('\nDone!\n')
 
 
