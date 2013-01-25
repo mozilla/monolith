@@ -5,7 +5,9 @@ var minute = 60000;
 function drawDataRange(from, size) {
    chart.showLoading();
    var i, x, y;
-   var series = chart.series[0];
+   var downloads_series = chart.series[0];
+   var users_series = chart.series[1];
+
    var query = {"query": {"match_all": {}},
                 "from": from, 
                 "size": size,
@@ -23,11 +25,15 @@ function drawDataRange(from, size) {
         dataType: "json",
         data: query,
         success: function(json) {
-          var chartData = [];
+          var downloads = [];
+          var users = [];
           $.each(json.hits.hits, function(i, item) {
-             chartData.push({x: Date.parse(item._source.date), y: item._source.count});
+             downloads.push({x: Date.parse(item._source.date), y: item._source.downloads_count});
+             users.push({x: Date.parse(item._source.date), y: item._source.users_count});
            });
-          series.setData(chartData);
+
+          downloads_series.setData(downloads);
+          users_series.setData(users);
           chart.redraw();
         },
         error: function (xhr, textStatus, errorThrown) {
@@ -42,7 +48,8 @@ function drawDataRange(from, size) {
 
 
 function drawData() {
-  var batch = 365;
+   // last 30 days
+  var batch = 30;
   var from = 0;
   drawDataRange(from, batch);
 }
@@ -60,6 +67,7 @@ function initChart() {
         renderTo: 'container',
         type: 'spline',
         marginRight: 10,
+        renderer: 'SVG'
     },
     title: {
         text: 'Time series'
@@ -92,7 +100,10 @@ function initChart() {
         enabled: false
     },
     series: [{
-        name: 'Random data',
+        name: 'Downloads',
+        data: (function() {return [];})()
+    },{
+        name: 'Daily users',
         data: (function() {return [];})()
     }]
   });

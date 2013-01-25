@@ -16,7 +16,8 @@ def feed(index='monolith', type='downloads'):
     for delta in range(day_range.days):
         data = {'date': first_day + datetime.timedelta(days=delta),
                 'os': random.choice(platforms),
-                'count': random.randint(0, 1000),
+                'downloads_count': random.randint(1000, 1500),
+                'users_count': random.randint(10000, 15000),
                 'add_on': 1}
 
         client.index(index, type, data)
