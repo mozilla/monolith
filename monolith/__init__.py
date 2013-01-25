@@ -18,9 +18,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("monolith.views")
-    config.add_static_view(name='media',
-            path='/Users/tarek/Dev/github.com/monolith/media')
-
+    config.add_static_view(name='media', path='monolith:media')
     json_renderer = JSON()
 
     def datetime_adapter(obj, request):
