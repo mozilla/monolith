@@ -74,7 +74,6 @@ function initChart() {
         tooltip: {
           shared : true,
         crosshairs : true,
-        //formatter: formatLabel(this),
         },
 
         plotOptions: {

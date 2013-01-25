@@ -4,10 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Monolith Dashboard</title>
     <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-ui.js"></script>
+
     <script type="text/javascript">
       $(function () {
           $(document).ready(function() {
             initChart();
+            $("#startdate").datepicker();
+            $("#enddate").datepicker();
             });
           });
 </script>
@@ -18,10 +22,16 @@
    <script src="exporting.js"></script>
    <script src="chart.js"></script>
 
-   <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-   <div>
-     webapp: <input type="text" name="app"/>
+   <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
    </div>
+   <br/> 
+   <div>
+     start date: <input type="text" id="startdate" />
+   </div>
+    <div>
+     end date: <input type="text" id="enddate" />
+   </div>
+
    <div>
      <input type="button" onclick="javascript:drawData();"
      value="Load..."/>
