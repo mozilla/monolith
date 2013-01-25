@@ -66,19 +66,25 @@ function initChart() {
     chart: {
         renderTo: 'container',
         type: 'spline',
-        marginRight: 10,
+        marginRight: 30,
         renderer: 'SVG'
     },
     title: {
-        text: 'Time series'
+        text: 'Downloads and Daily Users, last 30 days'
     },
+    tooltip: {
+        shared : true,
+        crosshairs : true
+    },
+
     xAxis: {
         type: 'datetime',
         tickPixelInterval: 150
     },
-    yAxis: {
+    yAxis: [
+  {
         title: {
-            text: 'Value'
+            text: 'Downloads'
         },
         plotLines: [{
             value: 0,
@@ -86,6 +92,18 @@ function initChart() {
             color: '#808080'
         }]
     },
+    {
+       opposite: true,
+        title: {
+            text: 'Daily Users'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    ],
     tooltip: {
      formatter: function() {
        return '<b>'+ this.series.name +'</b><br/>'+
