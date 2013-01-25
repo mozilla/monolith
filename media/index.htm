@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Monolith Dashboard</title>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript">
+      $(function () {
+          $(document).ready(function() {
+            initChart();
+            });
+          });
+</script>
+ </head>
+
+ <body>
+   <script src="highcharts.js"></script>
+   <script src="exporting.js"></script>
+   <script src="chart.js"></script>
+
+   <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+   <div>
+     webapp: <input type="text" name="app"/>
+   </div>
+   <div>
+     <input type="button" onclick="javascript:drawData();"
+     value="Load..."/>
+   </div>
+ </body>
+</html>

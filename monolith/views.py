@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 
 from cornice import Service
 from colander import MappingSchema, SchemaNode, Date, Seq
@@ -13,23 +13,22 @@ class ElasticSearchQuery(MappingSchema):
 
 es = Service(
     name='elasticsearch',
-    path='/',
+    path='/es',
     description="Raw access to ES")
 
 
 def valid_json_body(request):
     # XXX put this back in cornice.validators
     try:
-        body = json.loads(request.body)
-        request.validated['body'] = body
-    except:
-        request.errors.add('body', description='malformed json')
+        request.validated['body'] = request.json
+    except json.JSONDecodeError, exc:
+        request.errors.add('body', description=str(exc))
 
 
-@es.get(validators=(valid_json_body,))
+@es.post(validators=(valid_json_body,))
 def query_es(request):
     try:
-        return request.es.search(request.validated['body'], 'monolith')
+        return request.es.search(request.validated['body'], 'snaps')
     except ElasticSearchException as e:
         request.response.status = e.result['status']
         return e.result['error']

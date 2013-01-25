@@ -15,6 +15,8 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("monolith.views")
+    config.add_static_view(name='media',
+            path='/Users/tarek/Dev/github.com/monolith/media')
 
     settings = config.registry.settings
 
