@@ -25,10 +25,10 @@ def valid_json_body(request):
         request.errors.add('body', description=str(exc))
 
 
-@es.post(validators=(valid_json_body,))
+@es.post(validators=(valid_json_body,), renderer='json')
 def query_es(request):
     try:
-        return request.es.search(request.validated['body'], 'snaps')
+        return request.es.search(request.validated['body'], 'monolith')
     except ElasticSearchException as e:
         request.response.status = e.result['status']
         return e.result['error']

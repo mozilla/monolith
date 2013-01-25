@@ -2,34 +2,49 @@
 var chart;
 var minute = 60000;
 
+function drawDataRange(from, size) {
+   chart.showLoading();
+   var i, x, y;
+   var series = chart.series[0];
+   var query = {"query": {"match_all": {}},
+                "from": from, 
+                "size": size,
+                 "sort": [{"date": {"order" : "asc"}}]
+                };
 
-function drawData() {
-  // will be replaced by data from the server side.
+    query = JSON.stringify(query);
 
     $.ajax({
         type: "POST",
         url: "http://0.0.0.0:6543/es",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        data: '{"query": {"match_all": {}}}',
+        processData: false,
+        dataType: "json",
+        data: query,
         success: function(json) {
-            console.log(json.hits.hits);
+          var chartData = [];
+          $.each(json.hits.hits, function(i, item) {
+             chartData.push({x: Date.parse(item._source.date), y: item._source.count});
+           });
+          series.setData(chartData);
+          chart.redraw();
         },
         error: function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
+        },
+        failure: function(errMsg) {
+            alert(errMsg);
         }
     });
+    chart.hideLoading();
+}
 
 
-  var time = (new Date()).getTime();
-  var i, x, y;
-  var series = chart.series[0];
-
-  for (i = -19; i <= 0; i++) {
-    x = time + (i * minute);
-    y = Math.random();
-    series.addPoint([x, y]);
-  }
+function drawData() {
+  var batch = 365;
+  var from = 0;
+  drawDataRange(from, batch);
 }
 
 
@@ -66,7 +81,7 @@ function initChart() {
     tooltip: {
      formatter: function() {
        return '<b>'+ this.series.name +'</b><br/>'+
-       Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+       Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S', this.x) +'<br/>'+
        Highcharts.numberFormat(this.y, 2);
      }
     },
