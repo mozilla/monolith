@@ -10,6 +10,7 @@ function drawDataRange(from, size) {
 
   var query = {"query": {"match_all": {}},
     "facets": {"facet_os": {"terms": {"field": "os"}}},
+    "filter": {"range": {"date": {"gte": "2012-02-01", "lt": "2012-03-01"}}},
     "from": from,
     "size": size,
     "sort": [{"date": {"order" : "asc"}}]
