@@ -10,6 +10,7 @@
       $(function () {
           $(document).ready(function() {
             initChart();
+            $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
             $("#startdate").datepicker();
             $("#enddate").datepicker();
             });
@@ -26,10 +27,10 @@
    </div>
    <br/> 
    <div>
-     start date: <input type="text" id="startdate" />
+     start date: <input type="text" id="startdate" value="2012-02-01"/>
    </div>
     <div>
-     end date: <input type="text" id="enddate" />
+     end date: <input type="text" id="enddate" value="2012-03-01"/>
    </div>
 
    <div>

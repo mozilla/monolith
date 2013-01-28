@@ -2,7 +2,12 @@
 var chart;
 var minute = 60000;
 
-function drawDataRange(from, size) {
+function drawDataRange(start_date, end_date) {
+  var delta = end_date - start_date;
+  delta = Math.round(delta / 1000 / 60 / 60/ 24);
+  var start_date_str = $.datepicker.formatDate('yy-mm-dd', start_date);
+  var end_date_str = $.datepicker.formatDate('yy-mm-dd', end_date);
+  
   chart.showLoading();
   var i, x, y;
   var downloads_series = chart.series[0];
@@ -10,10 +15,9 @@ function drawDataRange(from, size) {
 
   var query = {"query": {"match_all": {}},
     "facets": {"facet_os": {"terms": {"field": "os"}}},
-    "filter": {"range": {"date": {"gte": "2012-02-01", "lt": "2012-03-01"}}},
-    "from": from,
-    "size": size,
-    "sort": [{"date": {"order" : "asc"}}]
+    "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
+    "sort": [{"date": {"order" : "asc"}}],
+    "size": delta
   };
 
   query = JSON.stringify(query);
@@ -54,10 +58,10 @@ function drawDataRange(from, size) {
 
 
 function drawData() {
-  // last 30 days
-  var batch = 30;
-  var from = 0;
-  drawDataRange(from, batch);
+  // picking the dates
+  var start_date = $("#startdate").datepicker('getDate');
+  var end_date = $("#enddate").datepicker('getDate');
+  drawDataRange(start_date, end_date);
 }
 
 function initChart() {
