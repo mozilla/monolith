@@ -4,3 +4,17 @@
   border: 1px solid grey;
   padding: 10px;
 }
+
+#query div {
+  margin: 10px;
+}
+
+#query label {
+  width: 100px;
+  display: block;
+  float: left;
+}
+
+#query input[type="button"] {
+  margin-top: 20px;
+}

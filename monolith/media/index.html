@@ -15,6 +15,7 @@
             $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
             $("#startdate").datepicker();
             $("#enddate").datepicker();
+            drawData();
             });
           });
         </script>
@@ -45,7 +46,7 @@
 
           <div>
             <input type="button" onclick="javascript:drawData();"
-            value="Load..."/>
+                   value="Update"/>
           </div>
         </div>
       </body>

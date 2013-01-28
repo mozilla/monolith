@@ -7,7 +7,7 @@ function drawDataRange(start_date, end_date) {
   delta = Math.round(delta / 1000 / 60 / 60/ 24);
   var start_date_str = $.datepicker.formatDate('yy-mm-dd', start_date);
   var end_date_str = $.datepicker.formatDate('yy-mm-dd', end_date);
-  
+
   chart.showLoading();
   var i, x, y;
   var downloads_series = chart.series[0];
@@ -79,7 +79,7 @@ function initChart() {
         renderer: 'SVG'
     },
         title: {
-          text: 'Downloads and Daily Users, last 30 days'
+          text: 'Downloads and Daily Users'
         },
         tooltip: {
           shared : true,
