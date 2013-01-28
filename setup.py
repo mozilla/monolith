@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-requires = ['cornice', 'PasteScript', 'waitress', 'colander', 'elasticutils',
+requires = ['cornice', 'PasteScript', 'waitress', 'colander',
             'pyelasticsearch']
 
 with open(os.path.join(here, 'README.rst')) as f:

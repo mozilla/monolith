@@ -6,7 +6,7 @@ from pyramid.config import Configurator
 from pyramid.events import NewRequest
 from pyramid.renderers import JSON
 
-from elasticutils import get_es
+from pyelasticsearch import ElasticSearch
 
 
 def attach_elasticsearch(event):
@@ -30,12 +30,9 @@ def main(global_config, **settings):
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
     json_renderer.add_adapter(datetime.date, date_adapter)
     config.add_renderer('json', json_renderer)
-
     settings = config.registry.settings
 
-    hosts = settings.get('elasticsearch.hosts', 'localhost:9200')
-    hosts = hosts.split(',')
-    config.registry.es = get_es(hosts=hosts)
-
+    host = settings.get('elasticsearch.host', 'http://localhost:9200')
+    config.registry.es = ElasticSearch(host)
     config.add_subscriber(attach_elasticsearch, NewRequest)
     return config.make_wsgi_app()

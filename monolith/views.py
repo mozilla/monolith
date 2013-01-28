@@ -2,7 +2,8 @@ import simplejson as json
 
 from cornice import Service
 from colander import MappingSchema, SchemaNode, Date, Seq
-from pyes.exceptions import ElasticSearchException
+
+from pyelasticsearch.exceptions import ElasticHttpError
 
 
 class ElasticSearchQuery(MappingSchema):
@@ -28,7 +29,7 @@ def valid_json_body(request):
 @es.post(validators=(valid_json_body,), renderer='json')
 def query_es(request):
     try:
-        return request.es.search(request.validated['body'], 'monolith')
-    except ElasticSearchException as e:
-        request.response.status = e.result['status']
-        return e.result['error']
+        return request.es.search(request.validated['body'], index='monolith')
+    except ElasticHttpError as e:
+        request.response.status = e.status_code
+        return e.error
