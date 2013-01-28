@@ -2,7 +2,7 @@
 var chart;
 var minute = 60000;
 
-function drawDataRange(start_date, end_date) {
+function drawDataRange(app_id, start_date, end_date) {
   var delta = end_date - start_date;
   delta = Math.round(delta / 1000 / 60 / 60/ 24);
   var start_date_str = $.datepicker.formatDate('yy-mm-dd', start_date);
@@ -13,7 +13,7 @@ function drawDataRange(start_date, end_date) {
   var downloads_series = chart.series[0];
   var users_series = chart.series[1];
 
-  var query = {"query": {"match_all": {}},
+  var query = {"query": {"field": {"add_on": app_id}},
     "facets": {"facet_os": {"terms": {"field": "os"}}},
     "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
     "sort": [{"date": {"order" : "asc"}}],
@@ -61,7 +61,7 @@ function drawData() {
   // picking the dates
   var start_date = $("#startdate").datepicker('getDate');
   var end_date = $("#enddate").datepicker('getDate');
-  drawDataRange(start_date, end_date);
+  drawDataRange($("#appid").val(), start_date, end_date);
 }
 
 function initChart() {

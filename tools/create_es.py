@@ -21,16 +21,19 @@ def feed(index='monolith', type='downloads'):
         }}},
         'store': {'compress': {'stored': 'true'}},
     })
-    for delta in range(day_range.days):
-        data = {'date': first_day + datetime.timedelta(days=delta),
-                'os': random.choice(platforms),
-                'downloads_count': random.randint(1000, 1500),
-                'users_count': random.randint(10000, 15000),
-                'add_on': 1}
 
-        client.index(index, type, data)
-        sys.stdout.write('.')
-        sys.stdout.flush()
+    # indexing 100 apps
+    for add_on in range(100):
+        for delta in range(day_range.days):
+            data = {'date': first_day + datetime.timedelta(days=delta),
+                    'os': random.choice(platforms),
+                    'downloads_count': random.randint(1000, 1500),
+                    'users_count': random.randint(10000, 15000),
+                    'add_on': add_on + 1}
+
+            client.index(index, type, data)
+            sys.stdout.write('.')
+            sys.stdout.flush()
 
     client.optimize('monolith', max_num_segments=1, wait_for_merge=True)
     sys.stdout.write('\nDone!\n')
