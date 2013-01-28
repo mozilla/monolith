@@ -3,6 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Monolith Dashboard</title>
+    <link rel="stylesheet" href="monolith.css" />
     <link rel="stylesheet" href="jquery-ui.css" />
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery-ui.js"></script>
@@ -16,27 +17,36 @@
             $("#enddate").datepicker();
             });
           });
-</script>
- </head>
+        </script>
+      </head>
 
- <body>
-   <script src="highcharts.js"></script>
-   <script src="exporting.js"></script>
-   <script src="chart.js"></script>
+      <body>
+        <script src="highcharts.js"></script>
+        <script src="exporting.js"></script>
+        <script src="chart.js"></script>
 
-   <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
-   </div>
-   <br/> 
-   <div>
-     start date: <input type="text" id="startdate" value="2012-02-01"/>
-   </div>
-    <div>
-     end date: <input type="text" id="enddate" value="2012-03-01"/>
-   </div>
+        <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
+        </div>
+        <br/>
 
-   <div>
-     <input type="button" onclick="javascript:drawData();"
-     value="Load..."/>
-   </div>
- </body>
-</html>
+        <div id="query">
+          <div>
+            <label for="startdate">
+              Start date
+            </label>
+            <input type="text" id="startdate" value="2012-02-01"/>
+          </div>
+          <div>
+            <label for="startdate">
+              End date
+            </label>
+            <input type="text" id="enddate" value="2012-03-01"/>
+          </div>
+
+          <div>
+            <input type="button" onclick="javascript:drawData();"
+            value="Load..."/>
+          </div>
+        </div>
+      </body>
+    </html>
