@@ -7,15 +7,16 @@
     <link rel="stylesheet" href="jquery-ui.css" />
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery-ui.js"></script>
+    <script type="text/javascript" src="jquery.class.js"></script>
 
     <script type="text/javascript">
       $(function () {
           $(document).ready(function() {
-            initChart();
-            $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
-            $("#startdate").datepicker();
-            $("#enddate").datepicker();
-            drawData();
+            $.monolith = { 
+             chart: new Monolith("http://0.0.0.0:6543/es", "#startdate",
+                                 "#enddate", "container")
+            }
+            $.monolith.chart.draw();
             });
           });
         </script>
@@ -50,7 +51,7 @@
             <input type="text" id="appid" value="1"/>
           </div>
           <div>
-            <input type="button" onclick="javascript:drawData();"
+            <input type="button" onclick="$.monolith.chart.draw();"
                    value="Update"/>
           </div>
         </div>
