@@ -14,7 +14,7 @@
           $(document).ready(function() {
             $.monolith = { 
              chart: new Monolith("http://0.0.0.0:6543/es", "#startdate",
-                                 "#enddate", "container")
+                                 "#enddate", "#appid", "container")
             }
             $.monolith.chart.draw();
             });

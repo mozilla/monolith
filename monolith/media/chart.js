@@ -10,10 +10,13 @@ Highcharts.setOptions({
 $.Class("Monolith", 
     {},
     {
-    init: function(server, start_date, end_date, container){
+    init: function(server, start_date, end_date, app_id, container){
+        // init the date pickers
         $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
-        $("#startdate").datepicker();
-        $("#enddate").datepicker();
+        $(start_date).datepicker();
+        $(end_date).datepicker();
+
+        this.appid = appid;
         this.start_date = start_date;
         this.end_date = end_date; 
         this.server = server;
@@ -90,7 +93,7 @@ $.Class("Monolith",
           // picking the dates
           var start_date = $(this.start_date).datepicker('getDate');
           var end_date = $(this.end_date).datepicker('getDate');
-          this._drawRange($("#appid").val(), start_date, end_date);
+          this._drawRange($(this.appid).val(), start_date, end_date);
       },
 
         _drawRange: function(app_id, start_date, end_date) {
