@@ -1,4 +1,18 @@
+/*
+   monolith.js
 
+   Provides a Monolith class that will draw a HighCharts diagram
+   by querying Elastic Search
+
+   options:
+
+   - server: the elastic server server full URL
+   - start_date: the id of the start date picker
+   - end_date: the id of the end date picker
+   - appid: the id of the app id input text
+   - container: the name of the chart container
+
+*/
 var minute = 60000;
 
 Highcharts.setOptions({
@@ -10,7 +24,7 @@ Highcharts.setOptions({
 $.Class("Monolith", 
     {},
     {
-    init: function(server, start_date, end_date, app_id, container){
+    init: function(server, start_date, end_date, appid, container){
         // init the date pickers
         $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
         $(start_date).datepicker();
