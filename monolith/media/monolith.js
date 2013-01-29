@@ -43,16 +43,24 @@ angular.module('components', [])
       controller: function($scope, $element) {
         $scope.draw = function () {
           $scope.chart.draw();
-        }
+          $("#modal-" + $scope.id).modal('hide');
+        };
+
       },
       // XXX can this be externalized as a template ?
       // not an ugly string
       template: 
         '<div>' +
-         '<div id="chart-{{id}}" style="height:400px; margin: 0 auto">' +
+         '<div id="chart-{{id}}" style="height:300px; margin: 0 auto">' +
          '</div>' +
+         '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' + 
+         '<div id="modal-{{id}}" class="modal hide fade">' +
+          '<div class="modal-header">' +
+           '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+           '<h3>Change "{{ title }}"</h3>' +
+           '</div>' +
+         '<div class="modal-body">' +
          '<form id="query-{{id}}"><fieldset>' +
-           '<legend>Tweak the chart (XXX popup)</legend>' +
            '<label for="startdate-{{id}}">Start Date</label>' +
            '<input type="text" id="startdate-{{id}}" value="2012-02-01"/>' +
            '<label for="enddate-{{id}}"> End date </label>' +
@@ -60,8 +68,9 @@ angular.module('components', [])
            '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
            '<input type="text" id="appid-{{id}}" value="1"/>' +
            '<br/>' +    // err well
-           '<button type="submit" class="btn" ng-click="draw()">Update</button>' +
-         '</fieldset></form>{{end}}</div>', 
+           '<button type="submit" class="btn btn-primary" ng-click="draw()">Update</button>' +
+         '</fieldset></form></div></div>' +
+         '{{end}}</div>', 
       replace: true,
       link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);

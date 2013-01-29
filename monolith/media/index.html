@@ -18,7 +18,7 @@
     <script type="text/javascript" src="bootstrap.js"></script>
 
   </head>
-  <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="80">
+  <body ng-app="components" class="preview" data-spy="scroll" data-target=".subnav" data-offset="80">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container branding">
@@ -34,29 +34,37 @@
    </div> <!-- end navbar-->
 
 
+<dashboard>
 <div class="container-fluid">
  <div class="row-fluid">
    <div class="span12">
-
-   <div ng-app="components">
-     <dashboard>
        <div class="span6">
          <chart title="Downloads and Daily Users 1" id="chart1">chart 1</chart>
        </div>
        <div class="span6"> 
          <chart title="Downloads and Daily Users 2" id="chart2">chart 2</chart>
        </div>
-    </dashboard>
-   </div>
- </div>  <!-- end of body span9 -->
+     </div>  <!-- end of span12 -->
+ </div> <!-- end of row-fluid -->
+
+ <div class="row-fluid">
+
+   <div class="span12">
+       <div class="span6">
+         <chart title="Downloads and Daily Users 3" id="chart3">chart 3</chart>
+       </div>
+       <div class="span6"> 
+         <chart title="Downloads and Daily Users 4" id="chart4">chart 4</chart>
+       </div>
+ </div>  <!-- end of span12 -->
+
 
  </div> <!-- end of row-fluid -->
+</dashboard>
 
 <br/><br/>
 
   <footer id="footer">
-   <p class="pull-right"><a href="#"><img src="http://cnd.faitmain.org/media/up.png"></a></p>
-
   <div class="inner">
     <div class="links">
       <ul>
