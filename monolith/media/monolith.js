@@ -13,6 +13,89 @@
    - container: the name of the chart container
 
 */
+
+angular.module('components', [])
+ .directive('dashboard', function() {
+    return {
+      restrict: 'E',
+      scope: {},
+      transclude: true,
+      controller: function($scope, $element) {
+        var charts = $scope.charts = [];
+        this.addChart = function(chart) {
+           charts.push(chart);
+        }
+      },
+      template:
+        '<div class="tabbable">' +
+         '<h3>Monolith Dashboard</h3>' + 
+          '<div class="tab-content" ng-transclude></div>' +
+        '</div>',
+      replace: true
+    };
+  })
+ .directive('chart', function() {
+    return {
+      require: '^dashboard',
+      restrict: 'E',
+      scope: {title: '@', id: '@', 'end': '@'},
+      transclude: false,
+      controller: function($scope, $element) {
+        $scope.draw = function () {
+          $scope.chart.draw();
+        }
+      },
+      // XXX can this be externalized as a template ?
+      // not an ugly string
+      template: 
+        '<div>' +
+         '<h3>{{ title }}</h3>' +
+         '<div id="chart-{{id}}" style="min-width: 400px; height: ' + 
+                                '400px; margin: 0 auto">' +
+         '</div>' +
+         '<div id="query-{{id}}">' +
+          '<div>' +
+            '<label for="startdate-{{id}}">' +
+              'Start date' +
+            '</label>' +
+            '<input type="text" id="startdate-{{id}}" value="2012-02-01"/>' +
+          '</div>' +
+          '<div>' +
+            '<label for="enddate-{{id}}">' +
+              'End date' +
+            '</label>' +
+            '<input type="text" id="enddate-{{id}}" value="2012-03-01"/>' +
+          '</div>' +
+          '<div>' +
+            '<label for="appid-{{id}}">' +
+              'App id (1 to 100)' +
+            '</label>' +
+            '<input type="text" id="appid-{{id}}" value="1"/>' +
+          '</div>' +
+          '<div>' +
+            '<button ng-click="draw()">Update</button>' +
+          '</div>' +
+         '</div>{{end}}</div>', 
+      replace: true,
+      link: function(scope, element, attrs, dashboard) {
+        dashboard.addChart(scope);
+        attrs.$observe('end', function(value) {
+            setTimeout(function() {
+            scope.chart = new Monolith("http://0.0.0.0:6543/es",
+              "#startdate-" + scope.id, 
+              "#enddate-" + scope.id,
+              "#appid-" + scope.id, 
+              "chart-" + scope.id);
+              scope.chart.draw();
+          });
+      }, 1000);
+      },
+    };
+  })
+
+
+
+
 var minute = 60000;
 
 Highcharts.setOptions({
@@ -20,6 +103,9 @@ Highcharts.setOptions({
         useUTC: false
     }
 });
+
+
+// XXX we shoulduse Angular classes here
 
 $.Class("Monolith", 
     {},
@@ -36,6 +122,7 @@ $.Class("Monolith",
         this.server = server;
         this.container = container;
 
+        // We should move all of this in its own json file...
         this.chart = new Highcharts.Chart({
           chart: {
             renderTo: this.container,

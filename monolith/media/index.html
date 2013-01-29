@@ -5,55 +5,22 @@
     <title>Monolith Dashboard</title>
     <link rel="stylesheet" href="monolith.css" />
     <link rel="stylesheet" href="jquery-ui.css" />
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery-ui.js"></script>
     <script type="text/javascript" src="jquery.class.js"></script>
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="highcharts.js"></script>
+    <script type="text/javascript" src="exporting.js"></script>
+    <script type="text/javascript" src="monolith.js"></script>
 
-    <script type="text/javascript">
-      $(function () {
-          $(document).ready(function() {
-            $.monolith = { 
-             chart: new Monolith("http://0.0.0.0:6543/es", "#startdate",
-                                 "#enddate", "#appid", "container")
-            }
-            $.monolith.chart.draw();
-            });
-          });
-        </script>
-      </head>
-
-      <body>
-        <script src="highcharts.js"></script>
-        <script src="exporting.js"></script>
-        <script src="monolith.js"></script>
-
-        <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
-        </div>
-        <br/>
-
-        <div id="query">
-          <div>
-            <label for="startdate">
-              Start date
-            </label>
-            <input type="text" id="startdate" value="2012-02-01"/>
-          </div>
-          <div>
-            <label for="startdate">
-              End date
-            </label>
-            <input type="text" id="enddate" value="2012-03-01"/>
-          </div>
-          <div>
-            <label for="appid">
-              App id (1 to 100)
-            </label>
-            <input type="text" id="appid" value="1"/>
-          </div>
-          <div>
-            <input type="button" onclick="$.monolith.chart.draw();"
-                   value="Update"/>
-          </div>
-        </div>
-      </body>
-    </html>
+  </head>
+  <body>
+   <div ng-app="components">
+    <dashboard>
+      <chart title="chart1" id="chart1">chart 1</chart>
+      <chart title="chart2" id="chart2">chart 2</chart>
+    </dashboard>
+   </div>
+ </body>
+</html>
