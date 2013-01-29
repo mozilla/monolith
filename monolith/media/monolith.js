@@ -49,33 +49,19 @@ angular.module('components', [])
       // not an ugly string
       template: 
         '<div>' +
-         '<h3>{{ title }}</h3>' +
-         '<div id="chart-{{id}}" style="min-width: 400px; height: ' + 
-                                '400px; margin: 0 auto">' +
+         '<div id="chart-{{id}}" style="height:400px; margin: 0 auto">' +
          '</div>' +
-         '<div id="query-{{id}}">' +
-          '<div>' +
-            '<label for="startdate-{{id}}">' +
-              'Start date' +
-            '</label>' +
-            '<input type="text" id="startdate-{{id}}" value="2012-02-01"/>' +
-          '</div>' +
-          '<div>' +
-            '<label for="enddate-{{id}}">' +
-              'End date' +
-            '</label>' +
-            '<input type="text" id="enddate-{{id}}" value="2012-03-01"/>' +
-          '</div>' +
-          '<div>' +
-            '<label for="appid-{{id}}">' +
-              'App id (1 to 100)' +
-            '</label>' +
-            '<input type="text" id="appid-{{id}}" value="1"/>' +
-          '</div>' +
-          '<div>' +
-            '<button ng-click="draw()">Update</button>' +
-          '</div>' +
-         '</div>{{end}}</div>', 
+         '<form id="query-{{id}}"><fieldset>' +
+           '<legend>Tweak the chart (XXX popup)</legend>' +
+           '<label for="startdate-{{id}}">Start Date</label>' +
+           '<input type="text" id="startdate-{{id}}" value="2012-02-01"/>' +
+           '<label for="enddate-{{id}}"> End date </label>' +
+           '<input type="text" id="enddate-{{id}}" value="2012-03-01"/>' +
+           '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
+           '<input type="text" id="appid-{{id}}" value="1"/>' +
+           '<br/>' +    // err well
+           '<button type="submit" class="btn" ng-click="draw()">Update</button>' +
+         '</fieldset></form>{{end}}</div>', 
       replace: true,
       link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);
@@ -85,7 +71,8 @@ angular.module('components', [])
               "#startdate-" + scope.id, 
               "#enddate-" + scope.id,
               "#appid-" + scope.id, 
-              "chart-" + scope.id);
+              "chart-" + scope.id,
+              scope.title);
               scope.chart.draw();
           });
       }, 1000);
@@ -110,7 +97,7 @@ Highcharts.setOptions({
 $.Class("Monolith", 
     {},
     {
-    init: function(server, start_date, end_date, appid, container){
+    init: function(server, start_date, end_date, appid, container, title){
         // init the date pickers
         $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
         $(start_date).datepicker();
@@ -121,6 +108,7 @@ $.Class("Monolith",
         this.end_date = end_date; 
         this.server = server;
         this.container = container;
+        this.title = title;
 
         // We should move all of this in its own json file...
         this.chart = new Highcharts.Chart({
@@ -131,7 +119,7 @@ $.Class("Monolith",
             renderer: 'SVG'
             },
             title: {
-                text: 'Downloads and Daily Users'
+                text: this.title
             },
             tooltip: {
                 shared : true,

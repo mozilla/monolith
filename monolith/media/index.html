@@ -5,6 +5,8 @@
     <title>Monolith Dashboard</title>
     <link rel="stylesheet" href="monolith.css" />
     <link rel="stylesheet" href="jquery-ui.css" />
+    <link rel="stylesheet" href="bootstrap.css" />
+    <link rel="stylesheet" href="bootstrap-responsive.css" />
 
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery-ui.js"></script>
@@ -13,14 +15,58 @@
     <script type="text/javascript" src="highcharts.js"></script>
     <script type="text/javascript" src="exporting.js"></script>
     <script type="text/javascript" src="monolith.js"></script>
+    <script type="text/javascript" src="bootstrap.js"></script>
 
   </head>
-  <body>
+  <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="80">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container branding">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">Monolith Dashboard</a>
+
+       </div>
+    </div>
+   </div> <!-- end navbar-->
+
+
+<div class="container-fluid">
+ <div class="row-fluid">
+   <div class="span12">
+
    <div ng-app="components">
-    <dashboard>
-      <chart title="chart1" id="chart1">chart 1</chart>
-      <chart title="chart2" id="chart2">chart 2</chart>
+     <dashboard>
+       <div class="span6">
+         <chart title="Downloads and Daily Users 1" id="chart1">chart 1</chart>
+       </div>
+       <div class="span6"> 
+         <chart title="Downloads and Daily Users 2" id="chart2">chart 2</chart>
+       </div>
     </dashboard>
    </div>
- </body>
-</html>
+ </div>  <!-- end of body span9 -->
+
+ </div> <!-- end of row-fluid -->
+
+<br/><br/>
+
+  <footer id="footer">
+   <p class="pull-right"><a href="#"><img src="http://cnd.faitmain.org/media/up.png"></a></p>
+
+  <div class="inner">
+    <div class="links">
+      <ul>
+        <li>© 2013 Mozilla</li>
+      </ul>
+      <div style="clear:both"/>
+     </div>
+  </div>
+  </footer>
+
+</div> <!-- end container -->
+</body></html>
+
