@@ -62,9 +62,9 @@ angular.module('components', [])
          '<div class="modal-body">' +
          '<form id="query-{{id}}"><fieldset>' +
            '<label for="startdate-{{id}}">Start Date</label>' +
-           '<input type="text" id="startdate-{{id}}" value="2012-02-01"/>' +
+           '<input type="text" id="startdate-{{id}}" value="01/01/2012"/>' +
            '<label for="enddate-{{id}}"> End date </label>' +
-           '<input type="text" id="enddate-{{id}}" value="2012-03-01"/>' +
+           '<input type="text" id="enddate-{{id}}" value="03/01/2012"/>' +
            '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
            '<input type="text" id="appid-{{id}}" value="1"/>' +
            '<br/>' +    // err well
@@ -108,9 +108,12 @@ $.Class("Monolith",
     {
     init: function(server, start_date, end_date, appid, container, title){
         // init the date pickers
-        $.datepicker.setDefaults({dateFormat: 'yy-mm-dd'});
         $(start_date).datepicker();
+        $(start_date).datepicker().on('changeDate',
+            function(ev) {$(start_date).datepicker('hide')});
         $(end_date).datepicker();
+        $(end_date).datepicker().on('changeDate',
+            function(ev) {$(end_date).datepicker('hide')});
 
         this.appid = appid;
         this.start_date = start_date;
@@ -189,17 +192,20 @@ $.Class("Monolith",
 
       draw: function () {
           // picking the dates
-          var start_date = $(this.start_date).datepicker('getDate');
-          var end_date = $(this.end_date).datepicker('getDate');
-          this._drawRange($(this.appid).val(), start_date, end_date);
+          var start_date = $(this.start_date).data('datepicker').date;
+          var end_date = $(this.end_date).data('datepicker').date;
+          var start_date_str = start_date.toISOString();
+          var end_date_str = end_date.toISOString();
+          this._drawRange($(this.appid).val(), start_date, end_date, 
+                          start_date_str, end_date_str);
       },
 
-        _drawRange: function(app_id, start_date, end_date) {
-            var delta = end_date - start_date;
-            delta = Math.round(delta / 1000 / 60 / 60/ 24);
-            var start_date_str = $.datepicker.formatDate('yy-mm-dd', start_date);
-            var end_date_str = $.datepicker.formatDate('yy-mm-dd', end_date);
-            this.chart.showLoading();
+        _drawRange: function(app_id, start_date, end_date, start_date_str, 
+                             end_date_str) {
+            var delta = end_date.getTime() - start_date.getTime();
+            var one_day = 1000 * 60 * 60 * 24;
+            delta = Math.round(delta / one_day);
+            this.chart.showLoading(); 
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
                 "facets": {"facet_os": {"terms": {"field": "os"}}},
