@@ -20,7 +20,8 @@ angular.module('components', [])
       restrict: 'E',
       scope: {},
       transclude: true,
-      controller: function($scope, $element) {
+      controller: function($scope, $element, $attrs) {
+        this.server = $scope.server = $attrs.server;
         var charts = $scope.charts = [];
         this.addChart = function(chart) {
            charts.push(chart);
@@ -40,7 +41,7 @@ angular.module('components', [])
       restrict: 'E',
       scope: {title: '@', id: '@', 'end': '@'},
       transclude: false,
-      controller: function($scope, $element) {
+      controller: function($scope, $element, $attrs) {
         $scope.draw = function () {
           $scope.chart.draw();
           $("#modal-" + $scope.id).modal('hide');
@@ -74,9 +75,10 @@ angular.module('components', [])
       replace: true,
       link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);
+ 
         attrs.$observe('end', function(value) {
             setTimeout(function() {
-            scope.chart = new Monolith("http://0.0.0.0:6543",
+            scope.chart = new Monolith(dashboard.server,
               "#startdate-" + scope.id,
               "#enddate-" + scope.id,
               "#appid-" + scope.id,
