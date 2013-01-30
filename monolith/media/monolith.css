@@ -22,3 +22,17 @@
 .datepicker, .dropdown-menu {
   z-index: 6000;
 }
+
+div.chart {
+  padding: 10px;
+  background-color: transparent;
+  border: 1px solid gray;
+  /*cursor: move;*/
+  border-radius: 10px 10px 10px 10px;
+  margin-bottom: 10px;
+}
+
+[draggable] {
+  -moz-user-select: none;
+}
+

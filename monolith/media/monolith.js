@@ -51,11 +51,12 @@ angular.module('components', [])
       // XXX can this be externalized as a template ?
       // not an ugly string
       template:
-        '<div>' +
+        '<div class="droppable chart"><div class="draggable">' +
          '<div id="chart-{{id}}" style="height:300px; margin: 0 auto">' +
          '</div>' +
          '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' +
-         '<div id="modal-{{id}}" class="modal hide fade">' +
+          '<div style="clear:both"/>' + 
+          '<div id="modal-{{id}}" class="modal hide fade">' +
           '<div class="modal-header">' +
            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
            '<h3>Change "{{ title }}"</h3>' +
@@ -71,9 +72,10 @@ angular.module('components', [])
            '<br/>' +    // err well
            '<button type="submit" class="btn btn-primary" ng-click="draw()">Update</button>' +
          '</fieldset></form></div></div>' +
-         '{{end}}</div>',
+         '</div>{{end}}</div>',
       replace: true,
       link: function(scope, element, attrs, dashboard) {
+        
         dashboard.addChart(scope);
 
         attrs.$observe('end', function(value) {
@@ -86,6 +88,39 @@ angular.module('components', [])
               scope.title, 
               scope.fields);
               scope.chart.draw();
+
+            // setting up the drag'n'drop
+            /* meh, not working great 
+            src = null;
+            options = {
+              revert:true,
+              opacity: 0.3,
+              start: function() {
+                src = $(this).parent();
+              }
+            };
+
+            $('.draggable').draggable(options);
+
+            $('.droppable').droppable({
+              drop: function( event, ui ) {
+                src.append(
+                        $('.draggable', this).remove().clone()
+                        .removeClass().addClass('.draggable')
+                        .css({"left": '', "opacity": ''})
+                        .draggable(options)
+                      );
+
+                      $(this).append(
+                        ui.draggable.remove().clone()
+                        .removeClass().addClass('.draggable')
+                        .css({"left": '', "opacity": ''})
+                        .draggable(options)
+                      );
+                 }
+              });
+          */
+
           });
       }, 1000);
       },
@@ -129,6 +164,11 @@ $.Class("Monolith",
 
         // building the series and the y axis
         this._fields = fields.split(",");
+
+        if (this._fields.length > 2) {
+          throw new Error("We support 1 or 2 series per chart, no more.");
+        }
+
         this.series = [];
         this.yAxis = [];
         var opposite;
@@ -232,7 +272,6 @@ $.Class("Monolith",
             var _series = this.chart.series;
             var _chart = this.chart;
             var _fields = this._fields;
-            console.log('ajax');
 
             $.ajax({
                 type: "POST",
