@@ -19,7 +19,8 @@ info = Service(name='info', path='/')
 def get_info(request):
     """Returns info on the Monolith server, like the list of queriable fields
     """
-    return {'fields': ['downloads_count', 'users_count']}
+    return {'fields': ['downloads_count', 'users_count'],
+            'es_endpoint': '/es'}
 
 
 es = Service(

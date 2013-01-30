@@ -28,7 +28,7 @@ angular.module('components', [])
       },
       template:
         '<div class="tabbable">' +
-         '<h3>Monolith Dashboard</h3>' + 
+         '<h3>Monolith Dashboard</h3>' +
           '<div class="tab-content" ng-transclude></div>' +
         '</div>',
       replace: true
@@ -49,11 +49,11 @@ angular.module('components', [])
       },
       // XXX can this be externalized as a template ?
       // not an ugly string
-      template: 
+      template:
         '<div>' +
          '<div id="chart-{{id}}" style="height:300px; margin: 0 auto">' +
          '</div>' +
-         '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' + 
+         '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' +
          '<div id="modal-{{id}}" class="modal hide fade">' +
           '<div class="modal-header">' +
            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
@@ -70,16 +70,16 @@ angular.module('components', [])
            '<br/>' +    // err well
            '<button type="submit" class="btn btn-primary" ng-click="draw()">Update</button>' +
          '</fieldset></form></div></div>' +
-         '{{end}}</div>', 
+         '{{end}}</div>',
       replace: true,
       link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);
         attrs.$observe('end', function(value) {
             setTimeout(function() {
-            scope.chart = new Monolith("http://0.0.0.0:6543/es",
-              "#startdate-" + scope.id, 
+            scope.chart = new Monolith("http://0.0.0.0:6543",
+              "#startdate-" + scope.id,
               "#enddate-" + scope.id,
-              "#appid-" + scope.id, 
+              "#appid-" + scope.id,
               "chart-" + scope.id,
               scope.title);
               scope.chart.draw();
@@ -103,7 +103,7 @@ Highcharts.setOptions({
 
 // XXX we shoulduse Angular classes here
 
-$.Class("Monolith", 
+$.Class("Monolith",
     {},
     {
     init: function(server, start_date, end_date, appid, container, title){
@@ -117,10 +117,12 @@ $.Class("Monolith",
 
         this.appid = appid;
         this.start_date = start_date;
-        this.end_date = end_date; 
+        this.end_date = end_date;
         this.server = server;
         this.container = container;
         this.title = title;
+        this.info = this._getInfo(server);
+        this.es_server = this.server + this.info.es_endpoint;
 
         // We should move all of this in its own json file...
         this.chart = new Highcharts.Chart({
@@ -134,8 +136,8 @@ $.Class("Monolith",
                 text: this.title
             },
             tooltip: {
-                shared : true,
-            crosshairs : true,
+              shared : true,
+              crosshairs : true,
             },
 
             plotOptions: {
@@ -196,16 +198,26 @@ $.Class("Monolith",
           var end_date = $(this.end_date).data('datepicker').date;
           var start_date_str = start_date.toISOString();
           var end_date_str = end_date.toISOString();
-          this._drawRange($(this.appid).val(), start_date, end_date, 
+          this._drawRange($(this.appid).val(), start_date, end_date,
                           start_date_str, end_date_str);
       },
+        _getInfo: function() {
+          var info;
 
-        _drawRange: function(app_id, start_date, end_date, start_date_str, 
+          $.ajax({url: this.server,
+                  type: 'GET',
+                  async: false,
+                  success: function(result) { info = result; }
+            });
+          return info;
+        },
+
+        _drawRange: function(app_id, start_date, end_date, start_date_str,
                              end_date_str) {
             var delta = end_date.getTime() - start_date.getTime();
             var one_day = 1000 * 60 * 60 * 24;
             delta = Math.round(delta / one_day);
-            this.chart.showLoading(); 
+            this.chart.showLoading();
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
                 "facets": {"facet_os": {"terms": {"field": "os"}}},
@@ -219,7 +231,7 @@ $.Class("Monolith",
 
             this.chart.hideLoading();
         },
-    
+
    _async: function (query) {
             var downloads_series = this.chart.series[0];
             var users_series = this.chart.series[1];
@@ -227,7 +239,7 @@ $.Class("Monolith",
 
             $.ajax({
                 type: "POST",
-                url: this.server,
+                url: this.es_server,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 processData: false,
