@@ -39,7 +39,7 @@ angular.module('components', [])
     return {
       require: '^dashboard',
       restrict: 'E',
-      scope: {title: '@', id: '@', 'end': '@'},
+      scope: {title: '@', id: '@', fields: '@'},
       transclude: false,
       controller: function($scope, $element, $attrs) {
         $scope.draw = function () {
@@ -75,7 +75,7 @@ angular.module('components', [])
       replace: true,
       link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);
- 
+
         attrs.$observe('end', function(value) {
             setTimeout(function() {
             scope.chart = new Monolith(dashboard.server,
@@ -83,7 +83,8 @@ angular.module('components', [])
               "#enddate-" + scope.id,
               "#appid-" + scope.id,
               "chart-" + scope.id,
-              scope.title);
+              scope.title, 
+              scope.fields);
               scope.chart.draw();
           });
       }, 1000);
@@ -108,7 +109,7 @@ Highcharts.setOptions({
 $.Class("Monolith",
     {},
     {
-    init: function(server, start_date, end_date, appid, container, title){
+    init: function(server, start_date, end_date, appid, container, title, fields) {
         // init the date pickers
         $(start_date).datepicker();
         $(start_date).datepicker().on('changeDate',
@@ -125,6 +126,28 @@ $.Class("Monolith",
         this.title = title;
         this.info = this._getInfo(server);
         this.es_server = this.server + this.info.es_endpoint;
+
+        // building the series and the y axis
+        this._fields = fields.split(",");
+        this.series = [];
+        this.yAxis = [];
+        var opposite;
+
+        for (var i = 0; i < this._fields.length; i++) {
+            this.series.push({name: this._fields[i],
+                              data: (function() {return [];})()});
+            opposite =  i % 2 != 0
+
+            this.yAxis.push({
+                title: {text: this._fields[i]},
+                opposite: opposite, 
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            })
+        }
 
         // We should move all of this in its own json file...
         this.chart = new Highcharts.Chart({
@@ -154,44 +177,15 @@ $.Class("Monolith",
                 type: 'datetime',
                 tickPixelInterval: 150
             },
-            yAxis: [
-            {
-                title: {
-                    text: 'Downloads'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            {
-                opposite: true,
-                title: {
-                    text: 'Daily Users'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            ],
+            yAxis: this.yAxis,
             legend: {
                 enabled: true
             },
             exporting: {
                 enabled: false
             },
-            series: [{
-                name: 'Downloads',
-                data: (function() {return [];})()
-            },{
-                name: 'Daily users',
-                data: (function() {return [];})()
-            }]
+            series: this.series
         });
-
     },
 
       draw: function () {
@@ -234,10 +228,11 @@ $.Class("Monolith",
             this.chart.hideLoading();
         },
 
-   _async: function (query) {
-            var downloads_series = this.chart.series[0];
-            var users_series = this.chart.series[1];
+       _async: function (query) {
+            var _series = this.chart.series;
             var _chart = this.chart;
+            var _fields = this._fields;
+            console.log('ajax');
 
             $.ajax({
                 type: "POST",
@@ -248,19 +243,34 @@ $.Class("Monolith",
                 dataType: "json",
                 data: query,
                 success: function(json) {
-                    var downloads = [];
-                    var users = [];
                     var facets = [];
+                    var dataSeries = [];
+                    var name;
+                    var num = _fields.length;
+
+                    for (var i = 0; i < num; i++) {
+                      dataSeries[i] = [];
+                    }
+
                     $.each(json.hits.hits, function(i, item) {
-                        downloads.push({x: Date.parse(item._source.date), y: item._source.downloads_count});
-                        users.push({x: Date.parse(item._source.date), y: item._source.users_count});
+                      for (var i = 0; i < num; i++) {
+                         name = _fields[i];
+                         if (item._source.hasOwnProperty(name)) {
+                           dataSeries[i].push({x: Date.parse(item._source.date), 
+                                               y: item._source[name]});
+                         }
+                      }
                     });
+
+                    // XXX what's this?
                     $.each(json.facets.facet_os.terms, function(i, item) {
                         facets.push({term: item.term, count: item.count});
                     });
 
-                    downloads_series.setData(downloads);
-                    users_series.setData(users);
+                    for (var i = 0; i < num; i++) {
+                      _series[i].setData(dataSeries[i]);
+                    }
+
                     _chart.redraw();
                 },
                 error: function (xhr, textStatus, errorThrown) {
