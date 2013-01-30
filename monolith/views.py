@@ -12,6 +12,16 @@ class ElasticSearchQuery(MappingSchema):
     names = SchemaNode(Seq(), location='body')
 
 
+info = Service(name='info', path='/')
+
+
+@info.get(renderer='json')
+def get_info(request):
+    """Returns info on the Monolith server, like the list of queriable fields
+    """
+    return {'fields': ['downloads_count', 'users_count']}
+
+
 es = Service(
     name='elasticsearch',
     path='/es',
