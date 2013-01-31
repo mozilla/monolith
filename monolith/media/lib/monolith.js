@@ -17,6 +17,11 @@
 
     - fields: comma-separeted list 
 
+   MonolithAggregate options:
+
+    - field: field to aggregate on
+    - aggregation interval (any of: day, week, month, year)
+
 */
 var minute = 60000;
 
