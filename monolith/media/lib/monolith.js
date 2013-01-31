@@ -68,7 +68,7 @@ function getTerms(server, field) {
   terms = [];
   $.each(res.facets.facet1.terms, function(i, item) {
     terms.push(item.term);
-  }
+  })
   return terms;
 }
 
