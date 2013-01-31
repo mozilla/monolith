@@ -62,11 +62,11 @@ function getTerms(server, field) {
   // XXX date range ?
   var query = {"query" : { "match_all" : {} },
                "facets" : {
-               field : { "terms" : {"field" : field}}}};
+                 "facet1" : { "terms" : {"field" : field}}}};
 
   res = queryES(server, query);
   terms = [];
-  $.each(res.facets.os.terms, function(i, item) {
+  $.each(res.facets.facet1.terms, function(i, item) {
     terms.push(item.term);
   }
   return terms;
