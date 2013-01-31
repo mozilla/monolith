@@ -94,7 +94,7 @@ app.directive('chart', function() {
 			}
 
 		   	if (scope.type == 'aggregate') {
-              scope.chart = new MonolithSeries(dashboard.server,
+              scope.chart = new MonolithAggregate(dashboard.server,
 				"#startdate-" + scope.id,
 				"#enddate-" + scope.id,
 				"#appid-" + scope.id,
@@ -431,7 +431,6 @@ $.Class("MonolithAggregate",
                 data: query,
                 success: function(json) {
                     var name;
-                    var num = _fields.length;
                     var data = [];
 
                     $.each(json.facets.facet_histo.entries, function(i, item) {
