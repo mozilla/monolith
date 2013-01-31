@@ -14,8 +14,10 @@
 
 */
 
-angular.module('components', [])
- .directive('dashboard', function() {
+var app = angular.module('components', []);
+
+
+app.directive('dashboard', function() {
     return {
       restrict: 'E',
       scope: {},
@@ -34,12 +36,14 @@ angular.module('components', [])
         '</div>',
       replace: true
     };
-  })
- .directive('chart', function() {
+  });
+
+app.directive('chart', function() {
     return {
       require: '^dashboard',
       restrict: 'E',
-      scope: {title: '@', id: '@', fields: '@'},
+      scope: {title: '@', id: '@', fields: '@', field: '@', 
+              type: '@', interval: '@'},
       transclude: false,
       controller: function($scope, $element, $attrs) {
         $scope.draw = function () {
@@ -75,59 +79,39 @@ angular.module('components', [])
          '</div>{{end}}</div>',
       replace: true,
       link: function(scope, element, attrs, dashboard) {
-        
         dashboard.addChart(scope);
 
         attrs.$observe('end', function(value) {
             setTimeout(function() {
-            scope.chart = new Monolith(dashboard.server,
-              "#startdate-" + scope.id,
-              "#enddate-" + scope.id,
-              "#appid-" + scope.id,
-              "chart-" + scope.id,
-              scope.title, 
-              scope.fields);
-              scope.chart.draw();
+            if (scope.type == 'series') {
+              scope.chart = new MonolithSeries(dashboard.server,
+				"#startdate-" + scope.id,
+				"#enddate-" + scope.id,
+				"#appid-" + scope.id,
+				"chart-" + scope.id,
+				scope.title, 
+				scope.fields);
+			}
 
-            // setting up the drag'n'drop
-            /* meh, not working great 
-            src = null;
-            options = {
-              revert:true,
-              opacity: 0.3,
-              start: function() {
-                src = $(this).parent();
-              }
-            };
+		   	if (scope.type == 'aggregate') {
+              scope.chart = new MonolithSeries(dashboard.server,
+				"#startdate-" + scope.id,
+				"#enddate-" + scope.id,
+				"#appid-" + scope.id,
+				"chart-" + scope.id,
+				scope.title, 
+				scope.field, 
+				scope.interval);
+			}
 
-            $('.draggable').draggable(options);
 
-            $('.droppable').droppable({
-              drop: function( event, ui ) {
-                src.append(
-                        $('.draggable', this).remove().clone()
-                        .removeClass().addClass('.draggable')
-                        .css({"left": '', "opacity": ''})
-                        .draggable(options)
-                      );
-
-                      $(this).append(
-                        ui.draggable.remove().clone()
-                        .removeClass().addClass('.draggable')
-                        .css({"left": '', "opacity": ''})
-                        .draggable(options)
-                      );
-                 }
-              });
-          */
+            scope.chart.draw();
 
           });
       }, 1000);
       },
     };
   })
-
-
 
 
 var minute = 60000;
@@ -141,7 +125,8 @@ Highcharts.setOptions({
 
 // XXX we shoulduse Angular classes here
 
-$.Class("Monolith",
+// Monolith series - plain series, up to 2
+$.Class("MonolithSeries",
     {},
     {
     init: function(server, start_date, end_date, appid, container, title, fields) {
@@ -161,7 +146,7 @@ $.Class("Monolith",
         this.title = title;
         this.info = this._getInfo(server);
         this.es_server = this.server + this.info.es_endpoint;
-
+        
         // building the series and the y axis
         this._fields = fields.split(",");
 
@@ -256,15 +241,12 @@ $.Class("Monolith",
             this.chart.showLoading();
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
-                "facets": {"facet_os": {"terms": {"field": "os"}}},
-                "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
-                "sort": [{"date": {"order" : "asc"}}],
-                "size": delta
-            };
+                         "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
+                         "sort": [{"date": {"order" : "asc"}}],
+                         "size": delta };
 
             query = JSON.stringify(query);
             this._async(query);
-
             this.chart.hideLoading();
         },
 
@@ -282,7 +264,6 @@ $.Class("Monolith",
                 dataType: "json",
                 data: query,
                 success: function(json) {
-                    var facets = [];
                     var dataSeries = [];
                     var name;
                     var num = _fields.length;
@@ -290,7 +271,6 @@ $.Class("Monolith",
                     for (var i = 0; i < num; i++) {
                       dataSeries[i] = [];
                     }
-
                     $.each(json.hits.hits, function(i, item) {
                       for (var i = 0; i < num; i++) {
                          name = _fields[i];
@@ -301,15 +281,165 @@ $.Class("Monolith",
                       }
                     });
 
-                    // XXX what's this?
-                    $.each(json.facets.facet_os.terms, function(i, item) {
-                        facets.push({term: item.term, count: item.count});
-                    });
-
                     for (var i = 0; i < num; i++) {
                       _series[i].setData(dataSeries[i]);
                     }
 
+                    _chart.redraw();
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    alert(xhr.responseText);
+                },
+                failure: function(errMsg) {
+                    alert(errMsg);
+                }
+            });
+
+   }
+    }
+)
+
+
+// Monolith series - facet search
+$.Class("MonolithAggregate",
+    {},
+    {
+    init: function(server, start_date, end_date, appid, container, title, field, interval) {
+        // init the date pickers
+        $(start_date).datepicker();
+        $(start_date).datepicker().on('changeDate',
+            function(ev) {$(start_date).datepicker('hide')});
+        $(end_date).datepicker();
+        $(end_date).datepicker().on('changeDate',
+            function(ev) {$(end_date).datepicker('hide')});
+
+        this.appid = appid;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.server = server;
+        this.container = container;
+        this.title = title;
+        this.info = this._getInfo(server);
+        this.es_server = this.server + this.info.es_endpoint;
+
+        this.interval = interval;
+        this.field = field;
+        this.series = [{name: field, data: (function() {return [];})()}];
+        this.yAxis = [{
+                title: {text: field},
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]}]
+
+
+        // We should move all of this in its own json file...
+        this.chart = new Highcharts.Chart({
+          chart: {
+            renderTo: this.container,
+            type: 'spline',
+            marginRight: 30,
+            renderer: 'SVG'
+            },
+            title: {
+                text: this.title
+            },
+            tooltip: {
+              shared : true,
+              crosshairs : true,
+            },
+
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+            enableMouseTracking: true
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: this.yAxis,
+            legend: {
+                enabled: true
+            },
+            exporting: {
+                enabled: false
+            },
+            series: this.series
+        });
+    },
+
+      draw: function () {
+          // picking the dates
+          var start_date = $(this.start_date).data('datepicker').date;
+          var end_date = $(this.end_date).data('datepicker').date;
+          var start_date_str = start_date.toISOString();
+          var end_date_str = end_date.toISOString();
+          this._drawRange($(this.appid).val(), start_date, end_date,
+                          start_date_str, end_date_str);
+      },
+        _getInfo: function() {
+          var info;
+
+          $.ajax({url: this.server,
+                  type: 'GET',
+                  async: false,
+                  success: function(result) { info = result; }
+            });
+          return info;
+        },
+
+        _drawRange: function(app_id, start_date, end_date, start_date_str,
+                             end_date_str) {
+            var delta = end_date.getTime() - start_date.getTime();
+            var one_day = 1000 * 60 * 60 * 24;
+            delta = Math.round(delta / one_day);
+            this.chart.showLoading();
+            var i, x, y;
+            var query = {"query": {"field": {"add_on": app_id}},
+                "facets": {
+                   "facet_histo" : {"date_histogram" : {"key_field" : "date",  
+                                    "value_field": this.field, 
+                                    "interval": this.interval}}
+                 },
+                "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
+                "sort": [{"date": {"order" : "asc"}}],
+                "size": delta
+            };
+
+            query = JSON.stringify(query);
+            this._async(query);
+            this.chart.hideLoading();
+        },
+
+       _async: function (query) {
+            var _series = this.chart.series;
+            var _chart = this.chart;
+            var _fields = this._fields;
+
+            $.ajax({
+                type: "POST",
+                url: this.es_server,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                processData: false,
+                dataType: "json",
+                data: query,
+                success: function(json) {
+                    var name;
+                    var num = _fields.length;
+                    var data = [];
+
+                    $.each(json.facets.facet_histo.entries, function(i, item) {
+                         data.push({x: new Date(item.time), 
+                                    y: item.total});
+                    });
+
+                    _series[0].setData(data) ;
                     _chart.redraw();
                 },
                 error: function (xhr, textStatus, errorThrown) {
