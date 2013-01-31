@@ -432,7 +432,7 @@ $.Class("MonolithAggregate",
                 success: function(json) {
                     var name;
                     var data = [];
-
+					// XXX display the day, week or month in the label...
                     $.each(json.facets.facet_histo.entries, function(i, item) {
                          data.push({x: new Date(item.time), 
                                     y: item.total});
