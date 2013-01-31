@@ -16,7 +16,7 @@ def feed(index='monolith', type='downloads'):
     day_range = last_day - first_day
 
     for month in range(1, 13):
-        name = 'time_2012_%.2d' % month
+        name = 'time_2012-%.2d' % month
         try:
             client.delete_index(name)
         except Exception:
@@ -42,7 +42,7 @@ def feed(index='monolith', type='downloads'):
                     'add_on': add_on + 1}
             docs[date.month].append(data)
         for month, values in docs.items():
-            client.bulk_index('time_2012_%.2d' % month, type, values)
+            client.bulk_index('time_2012-%.2d' % month, type, values)
             sys.stdout.write('.')
             sys.stdout.flush()
 
