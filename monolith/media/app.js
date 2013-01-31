@@ -4,20 +4,20 @@
 
   <div ng-app="components">
     <dashboard server="http://0.0.0.0:6543">
-         <chart title="Downloads and Daily Users" 
+         <chart title="Downloads and Daily Users"
                 id="chart1"
                 fields="downloads_count,users_count"
                 type="series"/>
 
-         <chart title="Daily Users" 
+         <chart title="Daily Users"
                 id="chart2"
                 fields="users_count"
                 type="series"/>
 
-         <chart title="Download counts per month" 
+         <chart title="Download counts per month"
                 id="chart4"
                 type="aggregate"
-                field="downloads_count" 
+                field="downloads_count"
                 interval="month"/>
     </dashboard>
   </div>
@@ -52,7 +52,7 @@ app.directive('chart', function() {
     return {
         require: '^dashboard',
     restrict: 'E',
-    scope: {title: '@', id: '@', fields: '@', field: '@', 
+    scope: {title: '@', id: '@', fields: '@', field: '@',
         type: '@', interval: '@'},
     transclude: false,
     controller: function($scope, $element, $attrs) {
@@ -69,7 +69,7 @@ app.directive('chart', function() {
     '<div id="chart-{{id}}" style="height:300px; margin: 0 auto">' +
     '</div>' +
     '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' +
-    '<div style="clear:both"/>' + 
+    '<div style="clear:both"/>' +
     '<div id="modal-{{id}}" class="modal hide fade">' +
     '<div class="modal-header">' +
     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
@@ -91,15 +91,18 @@ app.directive('chart', function() {
     link: function(scope, element, attrs, dashboard) {
         dashboard.addChart(scope);
 
+
         attrs.$observe('end', function(value) {
             setTimeout(function() {
+
+
                 if (scope.type == 'series') {
                     scope.chart = new MonolithSeries(dashboard.server,
                         "#startdate-" + scope.id,
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,
                         "chart-" + scope.id,
-                        scope.title, 
+                        scope.title,
                         scope.fields);
                 }
 
@@ -109,8 +112,8 @@ app.directive('chart', function() {
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,
                         "chart-" + scope.id,
-                        scope.title, 
-                        scope.field, 
+                        scope.title,
+                        scope.field,
                         scope.interval);
                 }
 

@@ -1,7 +1,7 @@
 /*
    monolith.js
 
-   Provides a MonolithSeries & MonolithAggregate class that will draw a 
+   Provides a MonolithSeries & MonolithAggregate class that will draw a
    HighCharts diagram by querying Elastic Search
 
    common options:
@@ -12,10 +12,10 @@
    - appid: the id of the app id input text
    - container: the name of the chart container
    - title: title of the series
-   
+
     MonolithSeries options:
 
-    - fields: comma-separeted list 
+    - fields: comma-separeted list
 
    MonolithAggregate options:
 
@@ -32,7 +32,47 @@ Highcharts.setOptions({
 });
 
 
-// XXX we shoulduse Angular classes here
+function queryES(server, query) {
+  var result;
+  query = JSON.stringify(query);
+
+  $.ajax({type: "POST",
+          url: server,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          processData: false,
+          dataType: "json",
+          data: query,
+          async: false,
+          success: function(json) { result = json;},
+          error: function (xhr, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(xhr.statusText);
+          },
+          failure: function(errMsg) {
+            console.log("failure " + errMsg);
+          }
+  });
+  return result;
+
+}
+
+
+function getTerms(server, field) {
+  // XXX date range ?
+  var query = {"query" : { "match_all" : {} },
+               "facets" : {
+               field : { "terms" : {"field" : field}}}};
+
+  res = queryES(server, query);
+  terms = [];
+  $.each(res.facets.os.terms, function(i, item) {
+    terms.push(item.term);
+  }
+  return terms;
+}
+
+
 
 $.Class.extend("MonolithBase", {},
   {
@@ -53,11 +93,12 @@ $.Class.extend("MonolithBase", {},
     },
 
     _init_datepicker: function(selector) {
-    // init the date pickers
-    $(selector).datepicker();
-    $(selector).datepicker().on('changeDate',
-       function(ev) {$(selector).datepicker('hide')});
+      // init the date pickers
+      $(selector).datepicker();
+      $(selector).datepicker().on('changeDate',
+         function(ev) {$(selector).datepicker('hide')});
     },
+
     draw: function () {
           // picking the dates
           var start_date = $(this.start_date).data('datepicker').date;
@@ -166,7 +207,7 @@ MonolithBase.extend("MonolithSeries",
 
             this.yAxis.push({
                 title: {text: this._fields[i]},
-                opposite: opposite, 
+                opposite: opposite,
                 plotLines: [{
                     value: 0,
                     width: 1,
@@ -208,7 +249,7 @@ MonolithBase.extend("MonolithSeries",
                       for (var i = 0; i < num; i++) {
                          name = fields[i];
                          if (item._source.hasOwnProperty(name)) {
-                           dataSeries[i].push({x: Date.parse(item._source.date), 
+                           dataSeries[i].push({x: Date.parse(item._source.date),
                                                y: item._source[name]});
                          }
                       }
@@ -254,8 +295,8 @@ MonolithBase.extend("MonolithAggregate",
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
                 "facets": {
-                   "facet_histo" : {"date_histogram" : {"key_field" : "date",  
-                                    "value_field": this.field, 
+                   "facet_histo" : {"date_histogram" : {"key_field" : "date",
+                                    "value_field": this.field,
                                     "interval": this.interval}}
                  },
                 "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
@@ -275,7 +316,7 @@ MonolithBase.extend("MonolithAggregate",
 
            // XXX display the day, week or month in the label...
            $.each(json.facets.facet_histo.entries, function(i, item) {
-             data.push({x: new Date(item.time), 
+             data.push({x: new Date(item.time),
                         y: item.total});
              });
             series[0].setData(data) ;
