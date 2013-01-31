@@ -20,27 +20,27 @@ def get_info(request):
     """Returns info on the Monolith server, like the list of queriable fields
     """
     return {'fields': ['downloads_count', 'users_count'],
-            'es_endpoint': '/es'}
+            'es_endpoint': '/v1/time'}
 
 
-es = Service(
-    name='elasticsearch',
-    path='/es',
-    description="Raw access to ES")
+es_time = Service(
+    name='elasticsearch-time',
+    path='/v1/time',
+    description="Raw access to ES time-series data.")
 
 
 def valid_json_body(request):
     # XXX put this back in cornice.validators
     try:
         request.validated['body'] = request.json
-    except json.JSONDecodeError, exc:
+    except json.JSONDecodeError as exc:
         request.errors.add('body', description=str(exc))
 
 
-@es.post(validators=(valid_json_body,), renderer='json')
+@es_time.post(validators=(valid_json_body,), renderer='json')
 def query_es(request):
     try:
-        return request.es.search(request.validated['body'], index='monolith')
+        return request.es.search(request.validated['body'], index='time_*')
     except ElasticHttpError as e:
         request.response.status = e.status_code
         return e.error
