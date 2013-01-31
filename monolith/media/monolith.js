@@ -125,37 +125,129 @@ Highcharts.setOptions({
 
 // XXX we shoulduse Angular classes here
 
+$.Class.extend("MonolithBase", {},
+  {
+    init: function(server, start_date, end_date, appid, container, title) {
+      this._init_datepicker(start_date);
+      this._init_datepicker(end_date);
+      this.appid = appid;
+      this.start_date = start_date;
+      this.end_date = end_date;
+      this.server = server;
+      this.container = container;
+      this.title = title;
+      this.info = this._getInfo();
+      this.es_server = this.server + this.info.es_endpoint;
+      this.series = [];
+      this.yAxis = [];
+      this._fields = [];
+    },
+
+    _init_datepicker: function(selector) {
+    // init the date pickers
+    $(selector).datepicker();
+    $(selector).datepicker().on('changeDate',
+       function(ev) {$(selector).datepicker('hide')});
+    },
+    draw: function () {
+          // picking the dates
+          var start_date = $(this.start_date).data('datepicker').date;
+          var end_date = $(this.end_date).data('datepicker').date;
+          var start_date_str = start_date.toISOString();
+          var end_date_str = end_date.toISOString();
+          this._drawRange($(this.appid).val(), start_date, end_date,
+                          start_date_str, end_date_str);
+      },
+     _getInfo: function() {
+          var info;
+          $.ajax({url: this.server,
+                  type: 'GET',
+                  async: false,
+                  success: function(result) { info = result; }
+            });
+          return info;
+        },
+
+       _async: function (query) {
+            var _asyncr = this._async_receive;
+            var _chart = this.chart;
+            var _fields = this._fields;
+
+            $.ajax({
+                type: "POST",
+                url: this.es_server,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                processData: false,
+                dataType: "json",
+                data: query,
+                success: function (json) {_asyncr(json, _chart, _fields)},
+                error: function (xhr, textStatus, errorThrown) {
+                    alert(xhr.responseText);
+                },
+                failure: function(errMsg) {
+                    alert(errMsg);
+                }
+            });
+
+   },
+
+     _getChart: function () {
+          var chart = new Highcharts.Chart({
+          chart: {
+            renderTo: this.container,
+            type: this.type,
+            marginRight: 30,
+            renderer: 'SVG'
+            },
+            title: {
+                text: this.title
+            },
+            tooltip: {
+              shared : true,
+              crosshairs : true,
+            },
+
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+            enableMouseTracking: true
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: this.yAxis,
+            legend: {
+                enabled: true
+            },
+            exporting: {
+                enabled: false
+            },
+            series: this.series
+        });
+     return chart;
+  }
+  }
+);
+
 // Monolith series - plain series, up to 2
-$.Class("MonolithSeries",
+MonolithBase.extend("MonolithSeries",
     {},
     {
     init: function(server, start_date, end_date, appid, container, title, fields) {
-        // init the date pickers
-        $(start_date).datepicker();
-        $(start_date).datepicker().on('changeDate',
-            function(ev) {$(start_date).datepicker('hide')});
-        $(end_date).datepicker();
-        $(end_date).datepicker().on('changeDate',
-            function(ev) {$(end_date).datepicker('hide')});
+        this._super(server, start_date, end_date, appid, container, title);
+        this.type = 'spline';
 
-        this.appid = appid;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.server = server;
-        this.container = container;
-        this.title = title;
-        this.info = this._getInfo(server);
-        this.es_server = this.server + this.info.es_endpoint;
-        
         // building the series and the y axis
         this._fields = fields.split(",");
 
         if (this._fields.length > 2) {
           throw new Error("We support 1 or 2 series per chart, no more.");
         }
-
-        this.series = [];
-        this.yAxis = [];
         var opposite;
 
         for (var i = 0; i < this._fields.length; i++) {
@@ -174,66 +266,10 @@ $.Class("MonolithSeries",
             })
         }
 
-        // We should move all of this in its own json file...
-        this.chart = new Highcharts.Chart({
-          chart: {
-            renderTo: this.container,
-            type: 'spline',
-            marginRight: 30,
-            renderer: 'SVG'
-            },
-            title: {
-                text: this.title
-            },
-            tooltip: {
-              shared : true,
-              crosshairs : true,
-            },
-
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: true
-                    },
-            enableMouseTracking: true
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150
-            },
-            yAxis: this.yAxis,
-            legend: {
-                enabled: true
-            },
-            exporting: {
-                enabled: false
-            },
-            series: this.series
-        });
+        this.chart = this._getChart();
     },
 
-      draw: function () {
-          // picking the dates
-          var start_date = $(this.start_date).data('datepicker').date;
-          var end_date = $(this.end_date).data('datepicker').date;
-          var start_date_str = start_date.toISOString();
-          var end_date_str = end_date.toISOString();
-          this._drawRange($(this.appid).val(), start_date, end_date,
-                          start_date_str, end_date_str);
-      },
-        _getInfo: function() {
-          var info;
-
-          $.ajax({url: this.server,
-                  type: 'GET',
-                  async: false,
-                  success: function(result) { info = result; }
-            });
-          return info;
-        },
-
-        _drawRange: function(app_id, start_date, end_date, start_date_str,
+     _drawRange: function(app_id, start_date, end_date, start_date_str,
                              end_date_str) {
             var delta = end_date.getTime() - start_date.getTime();
             var one_day = 1000 * 60 * 60 * 24;
@@ -250,30 +286,18 @@ $.Class("MonolithSeries",
             this.chart.hideLoading();
         },
 
-       _async: function (query) {
-            var _series = this.chart.series;
-            var _chart = this.chart;
-            var _fields = this._fields;
-
-            $.ajax({
-                type: "POST",
-                url: this.es_server,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                processData: false,
-                dataType: "json",
-                data: query,
-                success: function(json) {
-                    var dataSeries = [];
-                    var name;
-                    var num = _fields.length;
+        _async_receive: function(json, chart, fields) {
+            var series = chart.series;
+            var dataSeries = [];
+            var name;
+             var num = fields.length;
 
                     for (var i = 0; i < num; i++) {
                       dataSeries[i] = [];
                     }
                     $.each(json.hits.hits, function(i, item) {
                       for (var i = 0; i < num; i++) {
-                         name = _fields[i];
+                         name = fields[i];
                          if (item._source.hasOwnProperty(name)) {
                            dataSeries[i].push({x: Date.parse(item._source.date), 
                                                y: item._source[name]});
@@ -282,46 +306,22 @@ $.Class("MonolithSeries",
                     });
 
                     for (var i = 0; i < num; i++) {
-                      _series[i].setData(dataSeries[i]);
+                      series[i].setData(dataSeries[i]);
                     }
 
-                    _chart.redraw();
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    alert(xhr.responseText);
-                },
-                failure: function(errMsg) {
-                    alert(errMsg);
+                    chart.redraw();
                 }
-            });
-
-   }
     }
 )
 
 
 // Monolith series - facet search
-$.Class("MonolithAggregate",
+MonolithBase.extend("MonolithAggregate",
     {},
     {
     init: function(server, start_date, end_date, appid, container, title, field, interval) {
-        // init the date pickers
-        $(start_date).datepicker();
-        $(start_date).datepicker().on('changeDate',
-            function(ev) {$(start_date).datepicker('hide')});
-        $(end_date).datepicker();
-        $(end_date).datepicker().on('changeDate',
-            function(ev) {$(end_date).datepicker('hide')});
-
-        this.appid = appid;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.server = server;
-        this.container = container;
-        this.title = title;
-        this.info = this._getInfo(server);
-        this.es_server = this.server + this.info.es_endpoint;
-
+        this._super(server, start_date, end_date, appid, container, title);
+        this.type = 'column';
         this.interval = interval;
         this.field = field;
         this.series = [{name: field, data: (function() {return [];})()}];
@@ -333,67 +333,10 @@ $.Class("MonolithAggregate",
                     color: '#808080'
                 }]}]
 
-
-        // We should move all of this in its own json file...
-        this.chart = new Highcharts.Chart({
-          chart: {
-            renderTo: this.container,
-            type: 'column',
-            marginRight: 30,
-            renderer: 'SVG'
-            },
-            title: {
-                text: this.title
-            },
-            tooltip: {
-              shared : true,
-              crosshairs : true,
-            },
-
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: true
-                    },
-            enableMouseTracking: true
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150
-            },
-            yAxis: this.yAxis,
-            legend: {
-                enabled: true
-            },
-            exporting: {
-                enabled: false
-            },
-            series: this.series
-        });
+        this.chart = this._getChart();
     },
 
-      draw: function () {
-          // picking the dates
-          var start_date = $(this.start_date).data('datepicker').date;
-          var end_date = $(this.end_date).data('datepicker').date;
-          var start_date_str = start_date.toISOString();
-          var end_date_str = end_date.toISOString();
-          this._drawRange($(this.appid).val(), start_date, end_date,
-                          start_date_str, end_date_str);
-      },
-        _getInfo: function() {
-          var info;
-
-          $.ajax({url: this.server,
-                  type: 'GET',
-                  async: false,
-                  success: function(result) { info = result; }
-            });
-          return info;
-        },
-
-        _drawRange: function(app_id, start_date, end_date, start_date_str,
+     _drawRange: function(app_id, start_date, end_date, start_date_str,
                              end_date_str) {
             var delta = end_date.getTime() - start_date.getTime();
             var one_day = 1000 * 60 * 60 * 24;
@@ -416,40 +359,19 @@ $.Class("MonolithAggregate",
             this.chart.hideLoading();
         },
 
-       _async: function (query) {
-            var _series = this.chart.series;
-            var _chart = this.chart;
-            var _fields = this._fields;
+        _async_receive: function(json, chart, fields) {
+           var name;
+           var data = [];
+           var series = chart.series;
 
-            $.ajax({
-                type: "POST",
-                url: this.es_server,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                processData: false,
-                dataType: "json",
-                data: query,
-                success: function(json) {
-                    var name;
-                    var data = [];
-					// XXX display the day, week or month in the label...
-                    $.each(json.facets.facet_histo.entries, function(i, item) {
-                         data.push({x: new Date(item.time), 
-                                    y: item.total});
-                    });
-
-                    _series[0].setData(data) ;
-                    _chart.redraw();
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    alert(xhr.responseText);
-                },
-                failure: function(errMsg) {
-                    alert(errMsg);
-                }
-            });
-
-   }
+           // XXX display the day, week or month in the label...
+           $.each(json.facets.facet_histo.entries, function(i, item) {
+             data.push({x: new Date(item.time), 
+                        y: item.total});
+             });
+            series[0].setData(data) ;
+            chart.redraw();
+        },
     }
 )
 
