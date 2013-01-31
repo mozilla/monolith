@@ -338,7 +338,7 @@ $.Class("MonolithAggregate",
         this.chart = new Highcharts.Chart({
           chart: {
             renderTo: this.container,
-            type: 'spline',
+            type: 'column',
             marginRight: 30,
             renderer: 'SVG'
             },
