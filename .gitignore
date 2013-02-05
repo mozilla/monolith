@@ -2,9 +2,13 @@
 *.sw[po]
 .coverage
 pip-log.txt
-docs/_gh-pages
+bin
 build.py
 build
+docs/_gh-pages
+include
+lib
+man
 .DS_Store
 *-min.css
 *-all.css
