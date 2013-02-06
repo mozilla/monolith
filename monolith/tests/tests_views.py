@@ -69,6 +69,11 @@ class TestViews(TestCase):
         self.assertEqual(res.status_code, 500)
         self.assertTrue('SearchPhaseExecutionException' in res.body, res.body)
 
+    def test_query_time_invalid_json(self):
+        res = self.app.post('/v1/time', '{"que"""', expect_errors=True)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.json['status'], 'error')
+
     def test_get_totals(self):
         mock_get = mock.Mock()
         mock_get.return_value = {
