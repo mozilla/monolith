@@ -1,13 +1,20 @@
-.PHONY: docs build test coverage build_rpm clean
+HERE = $(shell pwd)
+BIN = $(HERE)/bin
+PYTHON = $(BIN)/python
 
-ifndef VTENV_OPTS
-VTENV_OPTS = "--no-site-packages"
-endif
+INSTALL = $(BIN)/pip install
+VTENV_OPTS ?= --distribute
 
-bin/python:
+.PHONY: all build test
+
+all: build
+
+$(PYTHON):
 	virtualenv $(VTENV_OPTS) .
-	bin/python setup.py develop
-	bin/pip install nose
 
-test: bin/python
-	bin/nosetests -s 
+build: $(PYTHON)
+	$(PYTHON) setup.py develop
+	$(INSTALL) monolith[test]
+
+test: build
+	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith

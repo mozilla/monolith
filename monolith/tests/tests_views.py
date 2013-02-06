@@ -1,10 +1,10 @@
-import unittest
+from unittest2 import TestCase
 
 from webtest import TestApp
 from monolith import main
 
 
-class TestViews(unittest.TestCase):
+class TestViews(TestCase):
 
     def setUp(self):
         global_config = {}
