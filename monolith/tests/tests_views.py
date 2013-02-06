@@ -53,6 +53,22 @@ class TestViews(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue('hits' in res.json)
 
+    def test_query_time_error(self):
+        mock_search = mock.Mock()
+
+        def fail(*args, **kw):
+            from pyelasticsearch import ElasticHttpError
+            raise ElasticHttpError(500, 'SearchPhaseExecutionException...')
+
+        mock_search.side_effect = fail
+        with mock.patch('pyelasticsearch.client.ElasticSearch.search',
+                        mock_search):
+            res = self.app.post('/v1/time', json.dumps({
+                'query': ['invalid query'],
+            }), expect_errors=True)
+        self.assertEqual(res.status_code, 500)
+        self.assertTrue('SearchPhaseExecutionException' in res.body, res.body)
+
     def test_get_totals(self):
         mock_get = mock.Mock()
         mock_get.return_value = {
