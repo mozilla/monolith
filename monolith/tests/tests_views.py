@@ -1,8 +1,6 @@
-import os
 import unittest
 
 from webtest import TestApp
-from pyramid import testing
 from monolith import main
 
 
