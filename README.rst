@@ -1,4 +1,4 @@
-Documentation
-=============
+Monolith
+=========
 
-Put a brief description of 'monolith'.
+Monolith provides a set of APIs to build time series charts.

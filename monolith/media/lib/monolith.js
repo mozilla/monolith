@@ -113,7 +113,13 @@ $.Class.extend("MonolithBase", {},
           $.ajax({url: this.server,
                   type: 'GET',
                   async: false,
-                  success: function(result) { info = result; }
+                  success: function(result) { info = result; },
+                  error: function (xhr, textStatus, errorThrown) {
+                    alert("error " + textStatus + " " + xhr.responseText);
+                  },
+                  failure: function(errMsg) {
+                    alert("failure " + errMsg);
+                  }
             });
           return info;
         },
