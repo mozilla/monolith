@@ -18,3 +18,6 @@ build: $(PYTHON)
 
 test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
+
+testjs: build
+	testacular start --single-run
