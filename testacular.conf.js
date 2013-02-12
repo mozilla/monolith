@@ -14,7 +14,7 @@ files = [
   'monolith/media/lib/highcharts.js',
   'monolith/media/lib/*.js',
   'monolith/media/*.js',
-  'monolith/tests/client.js'
+  'monolith/tests/test_monolith.js'
 ];
 
 
