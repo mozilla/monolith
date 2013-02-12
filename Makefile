@@ -28,7 +28,10 @@ test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
 
 testjs: build
-	testacular start --single-run
+	elasticsearch/bin/elasticsearch -p es.pid; sleep 5
+	$(BIN)/python tools/create_es.py 9998
+	-testacular start --single-run
+	kill $(cat es.pid)
 
 elasticsearch:
 	curl -C - --progress-bar http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$(ES_VERSION).tar.gz | tar -zx

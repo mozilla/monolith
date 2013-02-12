@@ -4,7 +4,7 @@ node.name: "mono_1"
 index.number_of_shards: 1
 index.number_of_replicas: 0
 
-transport.tcp.port: 9310
-http.port: 9210
+transport.tcp.port: 9999
+http.port: 9998
 
 discovery.zen.ping.multicast.enabled: false
