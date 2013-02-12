@@ -9,7 +9,17 @@ describe("Utils suite", function() {
     var total = result.hits.total;
     expect(total).toBe(3100);
     });
+
+  it("'getTerms'", function() {
+
+    result = getTerms("http://0.0.0.0:9998/_search", "os");
+    var wanted = ['Windows 8', 'Mac OS X', 'Ubuntu'];
+
+    expect(result).toEqual(wanted);
+    });
+
 });
+
 
 
 
