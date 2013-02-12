@@ -4,20 +4,35 @@ PYTHON = $(BIN)/python
 
 INSTALL = $(BIN)/pip install
 VTENV_OPTS ?= --distribute
+ES_VERSION ?= 0.20.4
 
-.PHONY: all build test
+BUILD_DIRS = bin build elasticsearch include lib lib64 man share
+
+
+.PHONY: all test testjs
 
 all: build
 
 $(PYTHON):
 	virtualenv $(VTENV_OPTS) .
 
-build: $(PYTHON)
+build: $(PYTHON) elasticsearch
 	$(PYTHON) setup.py develop
 	$(INSTALL) monolith[test]
+
+clean:
+	rm -rf $(BUILD_DIRS)
+
 
 test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
 
 testjs: build
 	testacular start --single-run
+
+elasticsearch:
+	curl -C - --progress-bar http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$(ES_VERSION).tar.gz | tar -zx
+	mv elasticsearch-$(ES_VERSION) elasticsearch
+	chmod a+x elasticsearch/bin/elasticsearch
+	mv elasticsearch/config/elasticsearch.yml elasticsearch/config/elasticsearch.in.yml
+	cp elasticsearch.yml elasticsearch/config/elasticsearch.yml
