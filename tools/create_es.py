@@ -6,8 +6,8 @@ import sys
 from pyelasticsearch import ElasticSearch
 
 
-def feed(index='monolith', type='downloads'):
-    client = ElasticSearch('http://localhost:9200/')
+def feed(index='monolith', type='downloads', es_port=9200):
+    client = ElasticSearch('http://0.0.0.0:%d/' % es_port)
     platforms = ['Mac OS X', 'Windows 8', 'Ubuntu']
 
     # indexing a year of data (2012)
@@ -47,9 +47,15 @@ def feed(index='monolith', type='downloads'):
             sys.stdout.flush()
 
     client.optimize('time_*', max_num_segments=1, wait_for_merge=True)
+    client.flush()
     sys.stdout.write('\nDone!\n')
 
 
 if __name__ == '__main__':
-    feed()
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+    else:
+        port = 9200
+
+    feed(es_port=port)
 

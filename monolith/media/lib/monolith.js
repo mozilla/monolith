@@ -32,6 +32,8 @@ Highcharts.setOptions({
 });
 
 
+jQuery.support.cors = true;
+
 function queryES(server, query) {
   var result;
   query = JSON.stringify(query);
@@ -42,6 +44,7 @@ function queryES(server, query) {
           dataType: "json",
           processData: false,
           dataType: "json",
+          //crossDomain: true,
           data: query,
           async: false,
           success: function(json) { result = json;},
