@@ -12,7 +12,8 @@ class ElasticSearchQuery(MappingSchema):
     names = SchemaNode(Seq(), location='body')
 
 
-info = Service(name='info', path='/')
+info = Service(name='info', path='/',
+               cors_policy={'origins': ('*',), 'credentials': True})
 
 
 @info.get(renderer='json')
@@ -26,7 +27,8 @@ def get_info(request):
 es_time = Service(
     name='elasticsearch-time',
     path='/v1/time',
-    description="Raw access to ES time-series data.")
+    description="Raw access to ES time-series data.",
+    cors_policy={'origins': ('*',), 'credentials': True})
 
 
 es_totals = Service(

@@ -18,6 +18,14 @@ describe("Utils suite", function() {
     expect(result).toEqual(wanted);
     });
 
+  it("'getInfo'", function() {
+
+    var chart = new MonolithBase("http://0.0.0.0:9997", "", "", "", "", "");
+    var wanted = [ 'downloads_count', 'users_count' ];
+    expect(chart.info.fields).toEqual(wanted);
+  });
+
+
 });
 
 

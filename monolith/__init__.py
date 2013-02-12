@@ -33,6 +33,11 @@ def main(global_config, **settings):
     settings = config.registry.settings
 
     host = settings.get('elasticsearch.host', 'http://localhost:9200')
+
+    # XXX we need a way to lazy-inject this to the cornice views
+    cors_origins = settings.get('cors.origins', '*')
+    cors_origins = cors_origins.split(',')
+
     config.registry.es = ElasticSearch(host)
     config.add_subscriber(attach_elasticsearch, NewRequest)
     return config.make_wsgi_app()

@@ -32,7 +32,6 @@ Highcharts.setOptions({
 });
 
 
-jQuery.support.cors = true;
 
 function queryES(server, query) {
   var result;
@@ -43,8 +42,6 @@ function queryES(server, query) {
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           processData: false,
-          dataType: "json",
-          //crossDomain: true,
           data: query,
           async: false,
           success: function(json) { result = json;},
@@ -116,12 +113,13 @@ $.Class.extend("MonolithBase", {},
           $.ajax({url: this.server,
                   type: 'GET',
                   async: false,
+                  dataType: "json",
                   success: function(result) { info = result; },
                   error: function (xhr, textStatus, errorThrown) {
-                    alert("error " + textStatus + " " + xhr.responseText);
+                    console.log(xhr.responseText);
                   },
                   failure: function(errMsg) {
-                    alert("failure " + errMsg);
+                    console.log("failure " + errMsg);
                   }
             });
           return info;
@@ -136,7 +134,6 @@ $.Class.extend("MonolithBase", {},
                 type: "POST",
                 url: this.es_server,
                 contentType: "application/json; charset=utf-8",
-                dataType: "json",
                 processData: false,
                 dataType: "json",
                 data: query,
