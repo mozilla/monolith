@@ -28,9 +28,13 @@ test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
 
 testjs: build
-	elasticsearch/bin/elasticsearch -p es.pid; sleep 5
+	elasticsearch/bin/elasticsearch -p es.pid
+	bin/pserve --pid-file monolith.pid --daemon monolith/tests/monolith.ini
+	sleep 5
 	-testacular start --single-run
 	kill `cat es.pid`
+	kill `cat monolith.pid` 
+	rm monolith.pid
 
 elasticsearch:
 	curl -C - --progress-bar http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$(ES_VERSION).tar.gz | tar -zx
