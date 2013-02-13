@@ -7,9 +7,6 @@ describe("Utils suite", function() {
 
   beforeEach(inject(function($rootScope, $controller, $compile) {
     $scope = $rootScope.$new();
-    //ctrl = $controller('MainCtrl', {
-    //  $scope: $scope
-    //});
     compile = $compile;
   }));
 
@@ -53,6 +50,7 @@ describe("Utils suite", function() {
      var titles = elm.find('h3');
      expect(titles[1].innerHTML).toBe('Change "Downloads and Daily Users"');
 
+     // XXX add more controls here
   });
 
 
