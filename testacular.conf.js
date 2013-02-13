@@ -12,15 +12,20 @@ files = [
   JASMINE_ADAPTER,
   'monolith/media/lib/jquery.min.js',
   'monolith/media/lib/highcharts.js',
+  'monolith/media/lib/angular.min.js',
   'monolith/media/lib/*.js',
   'monolith/media/*.js',
-  'monolith/tests/test_monolith.js'
+  'monolith/tests/test_monolith.js',
 ];
+
+// generate js files from html templates
+preprocessors = {
+};
 
 
 // list of files to exclude
 exclude = [
-  
+
 ];
 
 

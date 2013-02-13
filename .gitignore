@@ -7,7 +7,6 @@ build.py
 build
 docs/_gh-pages
 include
-lib
 man
 .DS_Store
 *-min.css
