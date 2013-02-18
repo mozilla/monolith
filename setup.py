@@ -26,7 +26,7 @@ with open(os.path.join(here, 'README.rst')) as f:
 
 
 setup(name='monolith',
-    version=0.1,
+    version='0.1',
     description='monolith',
     long_description=README,
     classifiers=[
