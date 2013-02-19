@@ -27,13 +27,16 @@ test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
 
 testjs: build
+	rm -rf elasticsearch/data/monotest/
 	elasticsearch/bin/elasticsearch -p es.pid
 	bin/pserve --pid-file monolith.pid --daemon monolith/tests/monolith.ini
 	sleep 5
+	$(BIN)/python tools/create_es.py 9998
 	-testacular start --single-run
 	kill `cat es.pid`
 	kill `cat monolith.pid`
-	rm monolith.pid
+	rm -f es.pid
+	rm -f monolith.pid
 
 elasticsearch:
 	curl -C - --progress-bar http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$(ES_VERSION).tar.gz | tar -zx
@@ -41,6 +44,3 @@ elasticsearch:
 	chmod a+x elasticsearch/bin/elasticsearch
 	mv elasticsearch/config/elasticsearch.yml elasticsearch/config/elasticsearch.in.yml
 	cp elasticsearch.yml elasticsearch/config/elasticsearch.yml
-	elasticsearch/bin/elasticsearch -p es.pid; sleep 5
-	$(BIN)/python tools/create_es.py 9998
-	kill `cat es.pid`
