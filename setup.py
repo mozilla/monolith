@@ -53,5 +53,4 @@ setup(name='monolith',
     [paste.app_factory]
     main = monolith:main
     """,
-    paster_plugins=['pyramid'],
 )
