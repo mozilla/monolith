@@ -1,5 +1,5 @@
-cluster.name: monolith
-node.name: "mono_1"
+cluster.name: monotest
+node.name: "test_1"
 
 index.number_of_shards: 1
 index.number_of_replicas: 0
