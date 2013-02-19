@@ -6,8 +6,11 @@ bin
 build.py
 build
 docs/_gh-pages
+elasticsearch
 include
+lib
 man
+pyramid.log
 .DS_Store
 *-min.css
 *-all.css
