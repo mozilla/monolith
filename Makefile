@@ -23,7 +23,6 @@ build: $(PYTHON) elasticsearch
 clean:
 	rm -rf $(BUILD_DIRS)
 
-
 test: build
 	$(BIN)/nosetests -s -d -v --with-coverage --cover-package monolith monolith
 
@@ -33,7 +32,7 @@ testjs: build
 	sleep 5
 	-testacular start --single-run
 	kill `cat es.pid`
-	kill `cat monolith.pid` 
+	kill `cat monolith.pid`
 	rm monolith.pid
 
 elasticsearch:
