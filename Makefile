@@ -4,7 +4,7 @@ PYTHON = $(BIN)/python
 
 INSTALL = $(BIN)/pip install
 VTENV_OPTS ?= --distribute
-ES_VERSION ?= 0.20.4
+ES_VERSION ?= 0.20.5
 
 BUILD_DIRS = bin build elasticsearch include lib lib64 man share
 
