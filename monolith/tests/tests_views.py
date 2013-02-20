@@ -48,7 +48,7 @@ class TestViews(TestCase):
                         mock_search):
             res = self.app.post('/v1/time', json.dumps({
                 'query': {'match_all': {}},
-                'filter': {'range': {'date': {'gte': start, 'lt': end}}},
+                'filter': {'range': {'date': {'gte': start, 'lte': end}}},
             }))
         self.assertEqual(res.status_code, 200)
         self.assertTrue('hits' in res.json)

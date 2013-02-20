@@ -233,7 +233,7 @@ MonolithBase.extend("MonolithSeries",
             this.chart.showLoading();
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
-                         "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
+                         "filter": {"range": {"date": {"gte": start_date_str, "lte": end_date_str}}},
                          "sort": [{"date": {"order" : "asc"}}],
                          "size": delta };
 
@@ -311,7 +311,7 @@ MonolithBase.extend("MonolithAggregate",
                                     "facet_filter": {
   				             "range": 
                                                      {"date": {"gte": start_date_str, 
-                                                       "lt": end_date_str}
+                                                       "lte": end_date_str}
                                                      }
                                                     }
                            }
