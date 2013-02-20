@@ -20,7 +20,8 @@ info = Service(name='info', path='/',
 def get_info(request):
     """Returns info on the Monolith server, like the list of queriable fields
     """
-    return {'fields': ['downloads_count', 'users_count'],
+    # XXX config ?
+    return {'fields': ['downloads_count', 'users_count', 'pageviews'],
             'es_endpoint': '/v1/time'}
 
 

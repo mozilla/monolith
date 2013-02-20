@@ -78,9 +78,9 @@ app.directive('chart', function() {
     '<div class="modal-body">' +
     '<form id="query-{{id}}"><fieldset>' +
     '<label for="startdate-{{id}}">Start Date</label>' +
-    '<input type="text" id="startdate-{{id}}" value="01/01/2012"/>' +
+    '<input type="text" id="startdate-{{id}}" value="01/13/2013"/>' +
     '<label for="enddate-{{id}}"> End date </label>' +
-    '<input type="text" id="enddate-{{id}}" value="03/01/2012"/>' +
+    '<input type="text" id="enddate-{{id}}" value="03/01/2013"/>' +
     '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
     '<input type="text" id="appid-{{id}}" value="1"/>' +
     '<br/>' +    // err well

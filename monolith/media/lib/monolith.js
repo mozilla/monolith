@@ -103,8 +103,8 @@ $.Class.extend("MonolithBase", {},
           // picking the dates
           var start_date = $(this.start_date).data('datepicker').date;
           var end_date = $(this.end_date).data('datepicker').date;
-          var start_date_str = start_date.toISOString();
-          var end_date_str = end_date.toISOString();
+          var start_date_str = start_date.toISOString().split("T")[0];
+          var end_date_str = end_date.toISOString().split("T")[0];
           this._drawRange($(this.appid).val(), start_date, end_date,
                           start_date_str, end_date_str);
       },
@@ -299,17 +299,26 @@ MonolithBase.extend("MonolithAggregate",
             delta = Math.round(delta / one_day);
             this.chart.showLoading();
             var i, x, y;
-            var query = {"query": {"field": {"add_on": app_id}},
+            //var match = {"field": {"add_on": app_id}};
+            var match = {'match_all': {}};
+
+            var query = {"query": match,
                 "facets": {
-                   "facet_histo" : {"date_histogram" : {"key_field" : "date",
-                                    "value_field": this.field,
-                                    "interval": this.interval}}
+                   "facet_histo" : {"date_histogram" : {
+                      		            "key_field" : "date",
+                                	    "value_field": this.field,
+	                                    "interval": this.interval},
+                                    "facet_filter": {
+  				             "range": 
+                                                     {"date": {"gte": start_date_str, 
+                                                       "lt": end_date_str}
+                                                     }
+                                                    }
+                           }
                  },
-                "filter": {"range": {"date": {"gte": start_date_str, "lt": end_date_str}}},
                 "sort": [{"date": {"order" : "asc"}}],
                 "size": delta
             };
-
             query = JSON.stringify(query);
             this._async(query);
             this.chart.hideLoading();
