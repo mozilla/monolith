@@ -17,8 +17,8 @@ class TestViews(TestCase):
     def test_get_info(self):
         res = self.app.get('/')
         info = res.json
-        self.assertEqual(info['fields'],
-                         ['downloads_count', 'users_count'])
+        self.assertEqual(set(info['fields']),
+                         set(['downloads_count', 'pageviews', 'users_count']))
 
     def test_query_time(self):
         mock_search = mock.Mock()
