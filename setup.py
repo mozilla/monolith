@@ -25,7 +25,7 @@ with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 
 
-setup(name='monolith',
+setup(name='monolith-web',
     version='0.1',
     description='monolith',
     long_description=README,
