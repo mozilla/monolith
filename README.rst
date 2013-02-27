@@ -7,3 +7,7 @@ analytics like time series data.
 This library implements the REST-ful web service interface.
 
 You can read more about it at https://mozilla-monolith.readthedocs.org/
+
+.. note::
+
+    Note: monolith is still under heavy development and not yet useful.
