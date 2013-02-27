@@ -1,3 +1,10 @@
+include *.ini
+include *.rst
+include *.yml
+
 recursive-include monolith *.py
-recursive-include monolith/web/media *.js
-recursive-include monolith/web/media *.htm
+recursive-include monolith/web *.css
+recursive-include monolith/web *.html
+recursive-include monolith/web *.ini
+recursive-include monolith/web *.js
+recursive-include monolith/web *.png
