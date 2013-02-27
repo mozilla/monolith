@@ -11,6 +11,6 @@ make build
 echo "Starting tests..."
 
 bin/nosetests -s -d -v --with-xunit --with-coverage --cover-package monolith monolith
-bin/coverage xml $(find monolith -name '*.py')
+bin/coverage xml $(find monolith/web -name '*.py')
 
 echo "FIN"

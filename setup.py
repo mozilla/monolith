@@ -25,9 +25,9 @@ with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 
 
-setup(name='monolith-web',
+setup(name='monolith.web',
     version='0.1',
-    description='monolith',
+    description='Mozilla Monolith Web Service',
     long_description=README,
     classifiers=[
         "Programming Language :: Python",
@@ -43,14 +43,15 @@ setup(name='monolith-web',
     author_email='services-dev@mozilla.org',
     url='https://github.com/mozilla/monolith',
     packages=find_packages(),
+    namespace_packages=['monolith'],
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
     tests_require=test_requires,
-    test_suite="monolith",
+    test_suite="monolith.web",
     extras_require={'test': test_requires},
     entry_points="""\
     [paste.app_factory]
-    main = monolith:main
+    main = monolith.web:main
     """,
 )

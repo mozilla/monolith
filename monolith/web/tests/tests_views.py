@@ -4,7 +4,7 @@ import mock
 from unittest2 import TestCase
 from webtest import TestApp
 
-from monolith import main
+from monolith.web import main
 
 
 class TestViews(TestCase):

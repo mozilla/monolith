@@ -18,7 +18,7 @@ $(PYTHON):
 
 build: $(PYTHON) elasticsearch
 	$(PYTHON) setup.py develop
-	$(INSTALL) monolith[test]
+	$(INSTALL) monolith.web[test]
 
 clean:
 	rm -rf $(BUILD_DIRS)
@@ -29,7 +29,7 @@ test: build
 testjs: build
 	rm -rf elasticsearch/data/monotest/
 	elasticsearch/bin/elasticsearch -p es.pid
-	bin/pserve --pid-file monolith.pid --daemon monolith/tests/monolith.ini
+	bin/pserve --pid-file monolith.pid --daemon monolith/web/tests/monolith.ini
 	sleep 5
 	$(BIN)/python tools/create_es.py 9998
 	-testacular start --single-run

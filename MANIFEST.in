@@ -1,3 +1,3 @@
-recursive-include monolith/media *.js
-recursive-include monolith/media *.htm
-
+recursive-include monolith *.py
+recursive-include monolith/web/media *.js
+recursive-include monolith/web/media *.htm
