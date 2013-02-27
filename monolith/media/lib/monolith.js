@@ -1,8 +1,8 @@
 /*
    monolith.js
 
-   Provides a MonolithSeries & MonolithAggregate class that will draw a
-   HighCharts diagram by querying Elastic Search
+   Provides a MonolithSeries & MonolithAggregate class that will draw 
+   a Rickshaw chart y querying Elastic Search
 
    common options:
 
@@ -24,13 +24,6 @@
 
 */
 var minute = 60000;
-
-Highcharts.setOptions({
-    global: {
-        useUTC: false
-    }
-});
-
 
 
 function queryES(server, query) {
@@ -149,44 +142,58 @@ $.Class.extend("MonolithBase", {},
    },
 
      _getChart: function () {
-          var chart = new Highcharts.Chart({
-          chart: {
-            renderTo: this.container,
-            type: this.type,
-            marginRight: 30,
-            renderer: 'SVG'
-            },
-            title: {
-                text: this.title
-            },
-            tooltip: {
-              shared : true,
-              crosshairs : true,
-            },
+var series = [
+    {
+      data: [{x: 0, y: 0 }],
+      color: "#c05020",
+      name: this.title
+    }  ];
 
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: true
-                    },
-            enableMouseTracking: true
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150
-            },
-            yAxis: this.yAxis,
-            legend: {
-                enabled: true
-            },
-            exporting: {
-                enabled: false
-            },
-            series: this.series
+        var chart = new Rickshaw.Graph ({
+            element: document.getElementById(this.container),
+            renderer: 'line',
+            series: series,
         });
-     return chart;
+
+
+var legend = new Rickshaw.Graph.Legend( {
+  graph: chart,
+  element: document.getElementById('legend-chart2')
+
+} );
+
+var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+  graph: chart,
+  formatter: function(series, x, y) {
+    var date = series.data[x]['date'];
+    var date = '<span class="date">' + date.toUTCString() + '</span>';
+    var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + '"></span>';
+    var content = swatch + parseInt(y) + '<br>' + date;
+    return content;
   }
+} );
+
+       var y_ticks = new Rickshaw.Graph.Axis.Y( {
+          graph: chart,
+          orientation: 'left',
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+          element: document.getElementById('y_axis-chart2' ),
+        } );
+
+     // DOES NOT WORK XXXX
+     container =  $('#' + this.container);
+
+     $(window).resize(function() {
+        var svg = container.find('svg')[0];
+        console.log(svg);
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('viewBox', '0 0 ' + container.width() + ' ' + 
+                                     container.height());
+        chart.update();
+   });
+       return chart;
+     }
   }
 );
 
@@ -230,7 +237,7 @@ MonolithBase.extend("MonolithSeries",
             var delta = end_date.getTime() - start_date.getTime();
             var one_day = 1000 * 60 * 60 * 24;
             delta = Math.round(delta / one_day);
-            this.chart.showLoading();
+            //this.chart.showLoading();
             var i, x, y;
             var query = {"query": {"field": {"add_on": app_id}},
                          "filter": {"range": {"date": {"gte": start_date_str, "lte": end_date_str}}},
@@ -239,7 +246,7 @@ MonolithBase.extend("MonolithSeries",
 
             query = JSON.stringify(query);
             this._async(query);
-            this.chart.hideLoading();
+            //this.chart.hideLoading();
         },
 
         _async_receive: function(json, chart, fields) {
@@ -265,7 +272,7 @@ MonolithBase.extend("MonolithSeries",
                       series[i].setData(dataSeries[i]);
                     }
 
-                    chart.redraw();
+                    chart.render();
                 }
     }
 )
@@ -297,7 +304,7 @@ MonolithBase.extend("MonolithAggregate",
             var delta = end_date.getTime() - start_date.getTime();
             var one_day = 1000 * 60 * 60 * 24;
             delta = Math.round(delta / one_day);
-            this.chart.showLoading();
+            //this.chart.showLoading();
             var i, x, y;
             //var match = {"field": {"add_on": app_id}};
             var match = {'match_all': {}};
@@ -305,11 +312,11 @@ MonolithBase.extend("MonolithAggregate",
             var query = {"query": match,
                 "facets": {
                    "facet_histo" : {"date_histogram" : {
-                      		            "key_field" : "date",
-                                	    "value_field": this.field,
-	                                    "interval": this.interval},
+                                    "key_field" : "date",
+                                    "value_field": this.field,
+                                    "interval": this.interval},
                                     "facet_filter": {
-  				             "range": 
+                                        "range":
                                                      {"date": {"gte": start_date_str, 
                                                        "lte": end_date_str}
                                                      }
@@ -321,21 +328,25 @@ MonolithBase.extend("MonolithAggregate",
             };
             query = JSON.stringify(query);
             this._async(query);
-            this.chart.hideLoading();
+            //this.chart.hideLoading();
         },
 
         _async_receive: function(json, chart, fields) {
            var name;
            var data = [];
            var series = chart.series;
+           var x = 0;
 
            // XXX display the day, week or month in the label...
            $.each(json.facets.facet_histo.entries, function(i, item) {
-             data.push({x: new Date(item.time),
-                        y: item.total});
+
+             //new Date(item.time)
+             var line = {x: x, y: item.total, date: new Date(item.time)};
+             data.push(line);
+             x += 1;
              });
-            series[0].setData(data) ;
-            chart.redraw();
+            series[0].data = data;
+            chart.render();
         },
     }
 )

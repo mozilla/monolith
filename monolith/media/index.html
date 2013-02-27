@@ -3,24 +3,44 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Monolith Dashboard</title>
-    <link rel="stylesheet" href="jquery-ui.css" />
-    <link rel="stylesheet" href="bootstrap.css" />
-    <link rel="stylesheet" href="bootstrap-responsive.css" />
-    <link rel="stylesheet" href="monolith.css" />
-    <link rel="stylesheet" href="datepicker.css" />
+    <link type="text/css"rel="stylesheet" href="jquery-ui.css" />
+    <link type="text/css" rel="stylesheet" href="bootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="bootstrap-responsive.css" />
+    <link type="text/css" rel="stylesheet" href="monolith.css" />
+    <link type="text/css" rel="stylesheet" href="datepicker.css" />
+    <link type="text/css" rel="stylesheet" href="graph.css">
+    <link type="text/css" rel="stylesheet" href="detail.css">
+    <link type="text/css" rel="stylesheet" href="legend.css">
+    <link type="text/css" rel="stylesheet" href="lines.css">
 
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui.js"></script>
     <script type="text/javascript" src="lib/jquery.class.js"></script>
     <script type="text/javascript" src="lib/angular.min.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript"
-      src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="lib/d3.v2.js"></script>
+    <script type="text/javascript" src="lib/rickshaw.js"></script>
     <script type="text/javascript" src="lib/bootstrap.js"></script>
     <script type="text/javascript" src="lib/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="lib/monolith.js"></script>
 
     <script type="text/javascript" src="app.js"></script>
+
+  <style>
+    .rickshaw_graph .detail .x_label { display: none }
+    .rickshaw_graph .detail .item { line-height: 1.4; padding: 0.5em }
+    .detail_swatch { float: right; display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 0 }
+    .rickshaw_graph .detail .date { color: #a0a0a0 }
+
+#y_axis-chart2 {
+  position: relative;
+  width: 40px;
+  height: 100%;
+  float: right;
+}
+.rickshaw_legend {
+/*  float: left;*/
+}
+  </style>
 
   </head>
   <body ng-app="components" class="preview" data-spy="scroll" data-target=".subnav" data-offset="80">
@@ -39,14 +59,14 @@
    </div> <!-- end navbar-->
 
 
-<dashboard server="http://166.78.8.5:6543">
+<dashboard server="http://0.0.0.0:6543">
 <div class="container-fluid">
  <div class="row-fluid">
    <div class="span12">
        <div class="span6"> 
          <chart title="Daily Page views" 
                 id="chart2"
-		type="aggregate"
+                type="aggregate"
                 field="pageviews"
                 interval="day"/>
        </div>
