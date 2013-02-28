@@ -158,6 +158,11 @@ _init_datepicker: function(selector) {
         element: document.getElementById('legend-' + this.id)
 
     } );
+   
+    var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+        graph: chart,
+        legend: legend
+    } );
 
     // hover window
     var hoverDetail = new Rickshaw.Graph.HoverDetail( {
