@@ -67,6 +67,9 @@ app.directive('chart', function() {
     template:
     '<div><div class="chart" >' +
 
+    // title
+    '<h2 class="chart">{{ title }}</h2>' +
+
     // y axis legend 
     '<div class="y_axis" id="y_axis-{{id}}"/>' +
 
@@ -74,9 +77,10 @@ app.directive('chart', function() {
     '<div id="chart-{{id}}" style="height:300px; margin: 0 auto"/>' +
 
     // legend and change button
-    '<div >' +
-    '<a href="#modal-{{id}}" role="button" class="btn btn-primary" data-toggle="modal">Change</a>' +
+    '<div class="legend">' +
+    '<a href="#modal-{{id}}" role="button" class="chart_btn btn" data-toggle="modal">Change</a>' +
     '<div id="legend-{{id}}"></div>' +
+    '<div style="clear:both"></div>' +
     '</div>' +
 
     // modal box 
@@ -94,7 +98,7 @@ app.directive('chart', function() {
     '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
     '<input type="text" id="appid-{{id}}" value="1"/>' +
     '<br/>' +    // err well
-    '<button type="submit" class="btn btn-primary" ng-click="draw()">Update</button>' +
+    '<button type="submit" class="chart_btn btn" ng-click="draw()">Update</button>' +
     '</fieldset></form></div></div>' +
     '</div>{{end}}</div>',
     replace: true,
