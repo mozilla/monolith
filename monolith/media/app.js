@@ -65,18 +65,18 @@ app.directive('chart', function() {
     // XXX can this be externalized as a template ?
     // not an ugly string
     template:
-    '<div><div class="chart span12" >' +
-    
+    '<div><div class="chart" >' +
+
     // y axis legend 
-    '<div id="y_axis-{{id}}"/>' +
+    '<div class="y_axis" id="y_axis-{{id}}"/>' +
 
     // actual chart
     '<div id="chart-{{id}}" style="height:300px; margin: 0 auto"/>' +
 
     // legend and change button
-    '<div class="span12">' +
-    '<a href="#modal-{{id}}" role="button" class="span2 btn btn-primary" data-toggle="modal">Change</a>' +
-    '<div class="span3 offset7" id="legend-{{id}}"></div>' +
+    '<div >' +
+    '<a href="#modal-{{id}}" role="button" class="btn btn-primary" data-toggle="modal">Change</a>' +
+    '<div id="legend-{{id}}"></div>' +
     '</div>' +
 
     // modal box 
@@ -107,7 +107,8 @@ app.directive('chart', function() {
 
 
                 if (scope.type == 'series') {
-                    scope.chart = new MonolithSeries(dashboard.server,
+                    scope.chart = new MonolithSeries(scope.id, 
+                        dashboard.server,
                         "#startdate-" + scope.id,
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,
@@ -117,7 +118,8 @@ app.directive('chart', function() {
                 }
 
                 if (scope.type == 'aggregate') {
-                    scope.chart = new MonolithAggregate(dashboard.server,
+                    scope.chart = new MonolithAggregate(scope.id, 
+                        dashboard.server,
                         "#startdate-" + scope.id,
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,

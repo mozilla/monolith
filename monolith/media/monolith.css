@@ -36,3 +36,18 @@ div.chart {
   -moz-user-select: none;
 }
 
+.rickshaw_graph .detail .x_label { display: none }
+.rickshaw_graph .detail .item { line-height: 1.4; padding: 0.5em }
+.detail_swatch { float: right; display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 0 }
+.rickshaw_graph .detail .date { color: #a0a0a0 }
+
+div.y_axis {
+  position: relative;
+  width: 40px;
+  height: 100%;
+  float: right;
+}
+.rickshaw_legend {
+/*  float: left;*/
+}
+
