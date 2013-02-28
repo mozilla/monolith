@@ -158,7 +158,7 @@ _init_datepicker: function(selector) {
         element: document.getElementById('legend-' + this.id)
 
     } );
-   
+
     var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
         graph: chart,
         legend: legend
@@ -168,7 +168,7 @@ _init_datepicker: function(selector) {
     var hoverDetail = new Rickshaw.Graph.HoverDetail( {
       graph: chart,
         formatter: function(series, x, y) {
-          var date = series.data[x]['date'];
+          var date = new Date(series.data[x]['date']);
           var date = '<span class="date">' + date.toUTCString() + '</span>';
           var swatch = '<span class="detail_swatch" style="background-color: ' 
                        + series.color + '"></span>';
@@ -236,8 +236,8 @@ MonolithBase.extend("MonolithSeries",
           delta = Math.round(delta / one_day);
           //this.chart.showLoading();
           var i, x, y;
-          //var match = {"field": {"add_on": app_id}};
-          var match = {'match_all': {}};
+          var match = {"field": {"browser": "Firefox"}};
+          //var match = {'match_all': {}};
 
 
           var query = {"query": match,
@@ -255,37 +255,33 @@ MonolithBase.extend("MonolithSeries",
           var dataSeries = [];
           var name;
           var num = fields.length;
+          var series_count = [];
 
           for (var i = 0; i < num; i++) {
             dataSeries[i] = [];
+            series_count.push(0);
           }
 
-          var x = 0;
-
-
           $.each(json.hits.hits, function(i, item) {
-            for (var i = 0; i < num; i++) {
-              name = fields[i];
+
+            console.log(item);
+            for (var z = 0; z < num; z++) {
+              name = fields[z];
               if (item._source.hasOwnProperty(name)) {
-                dataSeries[i].push(
-                 {x: x,
-                  date: Date.parse(item._source.date),
-                  y: item._source[name]});
+                // XXX parseInt() XXX
+                var line =  {x: series_count[z],
+                             date: Date.parse(item._source.date),
+                             y: parseInt(item._source[name])};
+
+                dataSeries[z].push(line);
+                series_count[z] += 1;
               }
             }
-             x = x + 1;
           });
 
           for (var i = 0; i < num; i++) {
-            var data = dataSeries[i];
-            if (data.length == 0) { 
-              series[i].data = [{x:0, y:0, date: new Date(0)}];
-            }
-            else {
-              series[i].data = data;
-            }
+            series[i].data = dataSeries[i];
           }
-        
           chart.render();
         }
     }
@@ -345,9 +341,7 @@ MonolithBase.extend("MonolithAggregate",
 
       // XXX display the day, week or month in the label...
       $.each(json.facets.facet_histo.entries, function(i, item) {
-
-        //new Date(item.time)
-        var line = {x: x, y: item.total, date: new Date(item.time)};
+        var line = {x: x, y: parseInt(item.total), date: item.time};
         data.push(line);
         x += 1;
       });
