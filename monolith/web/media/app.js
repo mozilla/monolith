@@ -65,11 +65,25 @@ app.directive('chart', function() {
     // XXX can this be externalized as a template ?
     // not an ugly string
     template:
-    '<div class="droppable chart"><div class="draggable">' +
-    '<div id="chart-{{id}}" style="height:300px; margin: 0 auto">' +
+    '<div><div class="chart" >' +
+
+    // title
+    '<h2 class="chart">{{ title }}</h2>' +
+
+    // y axis legend 
+    '<div class="y_axis" id="y_axis-{{id}}"/>' +
+
+    // actual chart
+    '<div id="chart-{{id}}" style="height:300px; margin: 0 auto"/>' +
+
+    // legend and change button
+    '<div class="legend">' +
+    '<a href="#modal-{{id}}" role="button" class="chart_btn btn" data-toggle="modal">Change</a>' +
+    '<div id="legend-{{id}}"></div>' +
+    '<div style="clear:both"></div>' +
     '</div>' +
-    '<a href="#modal-{{id}}" role="button" class="span2 offset1 btn btn-primary" data-toggle="modal">Change</a>' +
-    '<div style="clear:both"/>' +
+
+    // modal box 
     '<div id="modal-{{id}}" class="modal hide fade">' +
     '<div class="modal-header">' +
     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
@@ -84,7 +98,7 @@ app.directive('chart', function() {
     '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
     '<input type="text" id="appid-{{id}}" value="1"/>' +
     '<br/>' +    // err well
-    '<button type="submit" class="btn btn-primary" ng-click="draw()">Update</button>' +
+    '<button type="submit" class="chart_btn btn" ng-click="draw()">Update</button>' +
     '</fieldset></form></div></div>' +
     '</div>{{end}}</div>',
     replace: true,
@@ -97,7 +111,8 @@ app.directive('chart', function() {
 
 
                 if (scope.type == 'series') {
-                    scope.chart = new MonolithSeries(dashboard.server,
+                    scope.chart = new MonolithSeries(scope.id, 
+                        dashboard.server,
                         "#startdate-" + scope.id,
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,
@@ -107,7 +122,8 @@ app.directive('chart', function() {
                 }
 
                 if (scope.type == 'aggregate') {
-                    scope.chart = new MonolithAggregate(dashboard.server,
+                    scope.chart = new MonolithAggregate(scope.id, 
+                        dashboard.server,
                         "#startdate-" + scope.id,
                         "#enddate-" + scope.id,
                         "#appid-" + scope.id,

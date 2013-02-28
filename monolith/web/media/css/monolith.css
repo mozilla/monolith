@@ -1,0 +1,76 @@
+
+#query {
+  margin: 10px;
+  border: 1px solid grey;
+  padding: 10px;
+}
+
+#query div {
+  margin: 10px;
+}
+
+#query label {
+  width: 200px;
+  display: block;
+  float: left;
+}
+
+#query input[type="button"] {
+  margin-top: 20px;
+}
+
+.datepicker, .dropdown-menu {
+  z-index: 6000;
+}
+
+div.chart {
+  padding: 20px;
+  background-color: transparent;
+  border: 1px solid gray;
+  /*cursor: move;*/
+  border-radius: 10px 10px 10px 10px;
+  margin-bottom: 10px;
+}
+
+[draggable] {
+  -moz-user-select: none;
+}
+
+.rickshaw_graph .detail .x_label { display: none }
+.rickshaw_graph .detail .item { line-height: 1.4; padding: 0.5em }
+.detail_swatch { float: right; display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 0 }
+.rickshaw_graph .detail .date { color: #a0a0a0 }
+
+div.y_axis {
+  position: relative;
+  width: 40px;
+  height: 100%;
+  float: right;
+}
+
+.rickshaw_legend {
+  float: right;
+  padding: 3px;
+  background: none repeat scroll 0% 0% gray;
+}
+
+.rickshaw_legend .action {
+  opacity: 1;
+  color: white;
+}
+
+h2.chart {
+ text-align: center; 
+ font-size: 18px;
+ text-shadow: 0px 1px 0px rgb(255, 255, 255);
+ color: rgb(119, 119, 119);
+ font-weight: 200;
+}
+
+div.legend {
+  margin-top: 14px;
+}
+
+a.chart_btn {
+  float: left;
+}
