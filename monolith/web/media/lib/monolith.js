@@ -343,10 +343,10 @@ MonolithBase.extend("MonolithAggregate",
       $.each(json.facets.facet_histo.entries, function(i, item) {
         // XXX why count vs total ?
         if (item.hasOwnProperty("total")) {
-            var line = {x: x, y: parseInt(item.total), date: item.time};  
+            var line = {x: x, y: parseInt(item.total, 10), date: item.time};  
         }
         else {
-            var line = {x: x, y: parseInt(item.count), date: item.time};
+            var line = {x: x, y: parseInt(item.count, 10), date: item.time};
         }
         data.push(line);
         x += 1;
