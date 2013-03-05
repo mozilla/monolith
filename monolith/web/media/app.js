@@ -48,14 +48,20 @@ app.directive('dashboard', function() {
     };
 });
 
+
 app.directive('chart', function() {
     return {
         require: '^dashboard',
     restrict: 'E',
     scope: {title: '@', id: '@', fields: '@', field: '@',
-        type: '@', interval: '@'},
+            type: '@', interval: '@'},
     transclude: false,
     controller: function($scope, $element, $attrs) {
+        var today = new Date();
+        var _30daysago = new Date();
+        _30daysago.setDate(today.getDate() - 30);
+        $scope.today = $.datepicker.formatDate('mm/dd/yy', today);
+        $scope._30daysago = $.datepicker.formatDate('mm/dd/yy', _30daysago);
         $scope.draw = function () {
             $scope.chart.draw();
             $("#modal-" + $scope.id).modal('hide');
@@ -92,9 +98,9 @@ app.directive('chart', function() {
     '<div class="modal-body">' +
     '<form id="query-{{id}}"><fieldset>' +
     '<label for="startdate-{{id}}">Start Date</label>' +
-    '<input type="text" id="startdate-{{id}}" value="01/13/2013"/>' +
+    '<input type="text" id="startdate-{{id}}" value="{{_30daysago}}"/>' +
     '<label for="enddate-{{id}}"> End date </label>' +
-    '<input type="text" id="enddate-{{id}}" value="03/01/2013"/>' +
+    '<input type="text" id="enddate-{{id}}" value="{{today}}"/>' +
     '<label for="appid-{{id}}"> App id (1 to 100)</label>' +
     '<input type="text" id="appid-{{id}}" value="1"/>' +
     '<br/>' +    // err well
