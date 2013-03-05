@@ -1,12 +1,16 @@
 """Main entry point
 """
 import datetime
+import logging
 
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
 from pyramid.renderers import JSON
 
 from pyelasticsearch import ElasticSearch
+
+
+logger = logging.getLogger('monolith.web')
 
 
 def attach_elasticsearch(event):

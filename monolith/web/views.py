@@ -5,6 +5,8 @@ from colander import MappingSchema, SchemaNode, Date, Seq
 
 from pyelasticsearch.exceptions import ElasticHttpError
 
+from monolith.web import logger
+
 
 class ElasticSearchQuery(MappingSchema):
     start = SchemaNode(Date(), location='body', type='datetime.datetime')
@@ -42,8 +44,10 @@ def valid_json_body(request):
 
 @es_time.post(validators=(valid_json_body,), renderer='json')
 def query_es_time(request):
+    query = request.validated['body']
+    logger.info(query)
     try:
-        return request.es.search(request.validated['body'], index='time_*')
+        return request.es.search(query, index='time_*')
     except ElasticHttpError as e:
         request.errors.status = e.status_code
         request.errors.add('body', description=e.error)
