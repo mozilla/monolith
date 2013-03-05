@@ -2,7 +2,7 @@ HERE = $(shell pwd)
 BIN = $(HERE)/bin
 PYTHON = $(BIN)/python
 
-INSTALL = $(BIN)/pip install
+INSTALL = $(BIN)/pip install --no-deps
 VTENV_OPTS ?= --distribute
 ES_VERSION ?= 0.20.5
 
@@ -17,8 +17,10 @@ $(PYTHON):
 	virtualenv $(VTENV_OPTS) .
 
 build: $(PYTHON) elasticsearch
+	$(INSTALL) -r requirements/prod.txt
+	$(INSTALL) -r requirements/dev.txt
+	$(INSTALL) -r requirements/test.txt
 	$(PYTHON) setup.py develop
-	$(INSTALL) monolith.web[test]
 
 clean:
 	rm -rf $(BUILD_DIRS)

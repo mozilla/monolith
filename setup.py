@@ -9,7 +9,6 @@ requires = [
     'colander',
     'cornice',
     'pyelasticsearch',
-    'waitress',
 ]
 
 test_requires = requires + [
