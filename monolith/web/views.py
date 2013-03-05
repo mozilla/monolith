@@ -45,5 +45,6 @@ def query_es_time(request):
     try:
         return request.es.search(request.validated['body'], index='time_*')
     except ElasticHttpError as e:
-        request.response.status = e.status_code
-        return e.error
+        request.errors.status = e.status_code
+        request.errors.add('body', description=e.error)
+        return {}

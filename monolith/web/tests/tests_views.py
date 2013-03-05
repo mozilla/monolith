@@ -67,7 +67,11 @@ class TestViews(TestCase):
                 'query': ['invalid query'],
             }), expect_errors=True)
         self.assertEqual(res.status_code, 500)
-        self.assertTrue('SearchPhaseExecutionException' in res.body, res.body)
+        result = res.json
+        self.assertEqual(result['status'], 'error')
+        description = result['errors'][0]['description']
+        self.assertTrue('SearchPhaseExecutionException' in description,
+                        description)
 
     def test_query_time_invalid_json(self):
         res = self.app.post('/v1/time', '{"que"""', expect_errors=True)
