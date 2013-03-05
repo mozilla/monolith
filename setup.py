@@ -8,7 +8,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 requires = [
     'colander',
     'cornice',
-    'PasteScript',
     'pyelasticsearch',
     'waitress',
 ]

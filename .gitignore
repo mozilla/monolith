@@ -10,7 +10,7 @@ build
 docs/_gh-pages
 elasticsearch
 include
-^lib
+lib
 man
 pyramid.log
 .DS_Store
