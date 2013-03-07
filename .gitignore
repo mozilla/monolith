@@ -7,7 +7,7 @@ pip-log.txt
 bin
 build.py
 build
-docs/_gh-pages
+dist
 elasticsearch
 include
 lib
