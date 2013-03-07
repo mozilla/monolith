@@ -3,4 +3,4 @@
 	url = git://github.com/mozilla/playdoh-lib.git
 [submodule "monolith/web/media"]
 	path = monolith/web/media
-	url = git@github.com:mozilla/monolith.js.git
+	url = git://github.com/mozilla/monolith.js.git
