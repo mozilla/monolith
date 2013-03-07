@@ -32,7 +32,7 @@ testjs: build
 	rm -rf elasticsearch/data/monotest/
 	elasticsearch/bin/elasticsearch -p es.pid
 	bin/pserve --pid-file monolith.pid --daemon monolith/web/tests/monolith.ini
-	sleep 5
+	sleep 10
 	$(BIN)/python tools/create_es.py 9998
 	-testacular start --single-run
 	kill `cat es.pid`
