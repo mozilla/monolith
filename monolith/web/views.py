@@ -14,6 +14,7 @@ class ElasticSearchQuery(MappingSchema):
     names = SchemaNode(Seq(), location='body')
 
 
+
 info = Service(name='info', path='/',
                cors_policy={'origins': ('*',), 'credentials': True})
 
@@ -52,3 +53,11 @@ def query_es_time(request):
         request.errors.status = e.status_code
         request.errors.add('body', description=e.error)
         return {}
+
+
+heartbeat = Service(name='hb', path='/__heartbeat__')
+
+
+@heartbeat.get(renderer='json')
+def heartbeat(request):
+    return {'status': 'OK'}

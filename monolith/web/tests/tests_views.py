@@ -77,3 +77,8 @@ class TestViews(TestCase):
         res = self.app.post('/v1/time', '{"que"""', expect_errors=True)
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json['status'], 'error')
+
+    def test_hb(self):
+        res = self.app.get('/__heartbeat__')
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json['status'], 'OK')
