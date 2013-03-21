@@ -59,5 +59,5 @@ heartbeat = Service(name='hb', path='/__heartbeat__')
 
 
 @heartbeat.get(renderer='json')
-def heartbeat(request):
+def get_heartbeat(request):
     return {'status': 'OK'}
