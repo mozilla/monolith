@@ -46,7 +46,7 @@ def valid_json_body(request):
 
 @es_time.post(validators=(valid_json_body,), renderer='json')
 def query_es_time(request):
-    with StatsdTimer('monolith.query'):
+    with StatsdTimer('query'):
         query = request.validated['body']
         logger.info(query)
         try:
