@@ -6,9 +6,9 @@ __version__ = '0.3'
 here = os.path.abspath(os.path.dirname(__file__))
 
 requires = [
-    'colander',
-    'cornice',
-    'pyelasticsearch',
+    'colander==1.0a2',
+    'cornice==0.13',
+    'pyelasticsearch==0.3',
 ]
 
 test_requires = requires + [
