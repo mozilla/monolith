@@ -8,6 +8,7 @@ from pyramid.events import NewRequest
 from pyramid.renderers import JSON
 
 from pyelasticsearch import ElasticSearch
+import statsd
 
 
 logger = logging.getLogger('monolith.web')
@@ -37,6 +38,16 @@ def main(global_config, **settings):
     settings = config.registry.settings
 
     host = settings.get('elasticsearch.host', 'http://localhost:9200')
+
+    # statsd settings
+    statsd_settings = {'STATSD_HOST': settings.get('statsd.host', 'localhost'),
+                       'STATSD_PORT': int(settings.get('statsd.port', 8125)),
+                       'STATSD_SAMPLE_RATE': float(settings.get('statsd.sample',
+                                                   1.0)),
+                       'STATSD_BUCKET_PREFIX': settings.get('statsd.prefix',
+                                                            '')}
+
+    statsd.init_statsd(statsd_settings)
 
     # XXX we need a way to lazy-inject this to the cornice views
     cors_origins = settings.get('cors.origins', '*')

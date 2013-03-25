@@ -9,7 +9,9 @@ requires = [
     'colander==1.0a2',
     'cornice==0.13',
     'pyelasticsearch==0.3',
+    'statsd-client==1.0.4'
 ]
+
 
 test_requires = requires + [
     'coverage',
