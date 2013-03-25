@@ -6,7 +6,7 @@ WebOb==1.2.3
 beautifulsoup4==4.1.3
 colander==1.0a2
 cornice==0.13
-pyelasticsearch==0.3
+pyelasticsearch==0.4.1
 pyramid==1.4
 repoze.lru==0.6
 requests==1.1.0
