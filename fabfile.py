@@ -38,7 +38,7 @@ def deploy():
 
 
 @task
-def pre_update(ref=settings.UPDATE_REF):
+def pre_update(ref):
     execute(helpers.git_update, MONOLITH, ref)
 
 
@@ -46,5 +46,5 @@ def pre_update(ref=settings.UPDATE_REF):
 def update():
     execute(create_virtualenv, getattr(settings, 'DEV', False))
     with lcd(MONOLITH):
-        local('%s setup develop' % PYTHON)
+        local('%s setup.py develop' % PYTHON)
         local('%s /usr/bin/virtualenv --relocatable %s' % (PYTHON, VIRTUALENV))
