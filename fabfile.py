@@ -34,7 +34,7 @@ def deploy():
         deploy_roles=['web'],
         package_dirs=['monolith', 'venv'])
 
-    helpers.restart_uwsgi(getattr(settings, 'UWSGI', []))
+    helpers.restart_uwsgi(getattr(settings, 'UWSGI', ['monolith']))
 
 
 @task
@@ -44,7 +44,7 @@ def pre_update(ref):
 
 @task
 def update():
-    execute(create_virtualenv, getattr(settings, 'DEV', False))
+    execute(create_virtualenv)
     with lcd(MONOLITH):
         local('%s setup.py develop' % PYTHON)
         local('%s /usr/bin/virtualenv --relocatable %s' % (PYTHON, VIRTUALENV))
