@@ -46,5 +46,5 @@ def pre_update(ref):
 def update():
     execute(create_virtualenv)
     with lcd(MONOLITH):
-        local('%s setup.py develop' % PYTHON)
+        local('%s setup.py develop --no-deps' % PYTHON)
         local('%s /usr/bin/virtualenv --relocatable %s' % (PYTHON, VIRTUALENV))
