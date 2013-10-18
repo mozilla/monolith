@@ -58,4 +58,3 @@ if __name__ == '__main__':
         port = 9200
 
     feed(es_port=port)
-

@@ -8,21 +8,23 @@ from pyramid.events import NewRequest
 from pyramid.renderers import JSON
 
 from pyelasticsearch import ElasticSearch
-import statsd
+from statsd import StatsClient
 
 
 logger = logging.getLogger('monolith.web')
 
 
-def attach_elasticsearch(event):
+def attach_request(event):
     request = event.request
     event.request.es = request.registry.es
+    event.request.prefix = request.registry.prefix
+    event.request.statsd = request.registry.statsd
 
 
 def main(global_config, **settings):
     config = Configurator(settings=settings)
-    config.include("cornice")
-    config.scan("monolith.web.views")
+    config.include('cornice')
+    config.scan('monolith.web.views')
     config.add_static_view(name='media', path='monolith.web:media')
     json_renderer = JSON()
 
@@ -38,21 +40,23 @@ def main(global_config, **settings):
     settings = config.registry.settings
 
     host = settings.get('elasticsearch.host', 'http://localhost:9200')
+    prefix = settings.get('elasticsearch.prefix', '')
 
-    # statsd settings
-    statsd_settings = {'STATSD_HOST': settings.get('statsd.host', 'localhost'),
-                       'STATSD_PORT': int(settings.get('statsd.port', 8125)),
-                       'STATSD_SAMPLE_RATE': float(settings.get('statsd.sample',
-                                                   1.0)),
-                       'STATSD_BUCKET_PREFIX': settings.get('statsd.prefix',
-                                                            '')}
+    logger.info('Config is set to query %s/%stime_*' % (host, prefix))
 
-    statsd.init_statsd(statsd_settings)
+    statsd_settings = {
+        'host': settings.get('statsd.host', 'localhost'),
+        'port': int(settings.get('statsd.port', 8125)),
+        'prefix': settings.get('statsd.prefix', ''),
+    }
+    config.registry.statsd = StatsClient(**statsd_settings)
 
     # XXX we need a way to lazy-inject this to the cornice views
     cors_origins = settings.get('cors.origins', '*')
     cors_origins = cors_origins.split(',')
 
     config.registry.es = ElasticSearch(host)
-    config.add_subscriber(attach_elasticsearch, NewRequest)
+    config.registry.prefix = prefix
+    config.add_subscriber(attach_request, NewRequest)
+
     return config.make_wsgi_app()

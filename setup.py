@@ -9,7 +9,7 @@ requires = [
     'colander',
     'cornice',
     'pyelasticsearch',
-    'statsd-client',
+    'statsd',
 ]
 
 
@@ -27,7 +27,8 @@ with open(os.path.join(here, 'CHANGES.rst')) as f:
     CHANGES = f.read()
 
 
-setup(name='monolith.web',
+setup(
+    name='monolith.web',
     version=__version__,
     description='Mozilla Monolith Web Service',
     long_description=README + '\n\n' + CHANGES,

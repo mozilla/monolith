@@ -1,10 +1,9 @@
 import simplejson as json
 
+from colander import Date, MappingSchema, SchemaNode, Seq
 from cornice import Service
-from colander import MappingSchema, SchemaNode, Date, Seq
 
 from pyelasticsearch.exceptions import ElasticHttpError
-from statsd import StatsdTimer
 
 from monolith.web import logger
 
@@ -13,7 +12,6 @@ class ElasticSearchQuery(MappingSchema):
     start = SchemaNode(Date(), location='body', type='datetime.datetime')
     end = SchemaNode(Date(), location='body', type='datetime.datetime')
     names = SchemaNode(Seq(), location='body')
-
 
 
 info = Service(name='info', path='/',
@@ -46,11 +44,12 @@ def valid_json_body(request):
 
 @es_time.post(validators=(valid_json_body,), renderer='json')
 def query_es_time(request):
-    with StatsdTimer('query'):
+    with request.statsd.timer('query'):
         query = request.validated['body']
         logger.info(query)
         try:
-            return request.es.search(query, index='time_*')
+            return request.es.search(query,
+                                     index='%stime_*' % request.prefix)
         except ElasticHttpError as e:
             request.errors.status = e.status_code
             request.errors.add('body', description=e.error)
