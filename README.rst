@@ -1,13 +1,1 @@
-Monolith Web
-============
-
-Mozilla Monolith is an application to provide statistics and charts for
-analytics like time series data.
-
-This library implements the REST-ful web service interface.
-
-You can read more about it at https://mozilla-monolith.readthedocs.org/
-
-.. note::
-
-    Note: monolith is still under heavy development and not yet useful.
+This repository is no longer used. You probably want https://github.com/mozilla/monolith-client/ or https://github.com/mozilla/monolith-aggregator/.
